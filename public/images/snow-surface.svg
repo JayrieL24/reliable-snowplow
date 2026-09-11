@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560" viewBox="0 0 560 560">
+  <defs>
+    <filter id="packed-snow" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency=".022 .038" numOctaves="5" seed="31" result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation=".55" result="softNoise"/>
+      <feDiffuseLighting in="softNoise" surfaceScale="13" diffuseConstant="1.05" lighting-color="#ffffff" result="litSnow">
+        <feDistantLight azimuth="222" elevation="38"/>
+      </feDiffuseLighting>
+      <feSpecularLighting in="softNoise" surfaceScale="8" specularConstant=".45" specularExponent="14" lighting-color="#fafdff" result="sparkle">
+        <feDistantLight azimuth="218" elevation="56"/>
+      </feSpecularLighting>
+      <feBlend in="litSnow" in2="sparkle" mode="screen" result="snowLight"/>
+      <feColorMatrix in="snowLight" values=".72 0 0 0 .15  0 .8 0 0 .18  0 0 .92 0 .22  0 0 0 1 0"/>
+    </filter>
+  </defs>
+  <rect width="560" height="560" fill="#b9cddd"/>
+  <rect x="-20" y="-20" width="600" height="600" fill="#d7e4ed" filter="url(#packed-snow)"/>
+</svg>

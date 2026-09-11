@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <defs>
+    <filter id="snow-grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035 0.11" numOctaves="3" seed="17"/>
+      <feColorMatrix values="0 0 0 0 0.04  0 0 0 0 0.16  0 0 0 0 0.29  0 0 0 .26 0"/>
+    </filter>
+    <radialGradient id="flake" cx="35%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#b8cad8" stop-opacity=".18"/>
+    </radialGradient>
+  </defs>
+  <rect width="320" height="320" fill="#e8f0f6"/>
+  <rect width="320" height="320" filter="url(#snow-grain)" opacity=".82"/>
+  <g fill="url(#flake)">
+    <circle cx="38" cy="47" r="2.2"/><circle cx="127" cy="27" r="1.4"/>
+    <circle cx="236" cy="64" r="2.8"/><circle cx="295" cy="23" r="1.2"/>
+    <circle cx="76" cy="152" r="1.5"/><circle cx="188" cy="123" r="2.1"/>
+    <circle cx="276" cy="176" r="1.8"/><circle cx="24" cy="252" r="2.6"/>
+    <circle cx="151" cy="278" r="1.3"/><circle cx="249" cy="256" r="2.2"/>
+  </g>
+  <g fill="none" stroke="#0b2f52" stroke-linecap="round" opacity=".11">
+    <path d="M-20 92c60-24 111-22 160 3s105 28 200-7"/>
+    <path d="M-29 219c72-28 131-23 184 5s108 25 192-13"/>
+  </g>
+</svg>
