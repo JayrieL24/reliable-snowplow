@@ -11,14 +11,13 @@ import {
   HardHat,
   Home,
   MapPin,
-  Menu,
   Play,
   ShieldCheck,
   Users,
-  X,
   Zap,
 } from "lucide-react";
 import { ComingSoonModal, ReferralTrigger } from "@/components/ui/coming-soon";
+import { SceneNavbar } from "@/components/ui/scene-navbar";
 
 const benefits = [
   { icon: Gift, title: "Real rewards", copy: "Earn a payout when a successful referral becomes a customer or joins the winter team." },
@@ -29,39 +28,12 @@ const benefits = [
 
 export default function HomePage() {
   return (
-    <main>
+    <>
+      <SceneNavbar />
+      <main className="page-content">
       <section className="scene-hero" id="top">
         <Image className="scene-background" src="/images/hero/winter-scene-v2.webp" alt="Snow-covered road through a quiet winter landscape at night" fill priority sizes="100vw" />
         <div className="scene-shade" aria-hidden="true" />
-        <header className="scene-header">
-          <a className="scene-brand" href="#top" aria-label="Referral program home">
-            <Image className="site-wordmark" src="/images/snowplow-referrals-wordmark.svg" alt="Snowplow Referrals" width={460} height={64} priority />
-          </a>
-          <nav className="scene-desktop-nav" aria-label="Primary navigation">
-            <a href="#why-refer">Why refer</a>
-            <a href="#customer-program">Customer program</a>
-            <a href="#worker-program">Worker program</a>
-            <a href="#resources">Worker guide</a>
-          </nav>
-          <div className="scene-header-actions">
-            <ReferralTrigger className="scene-nav-action" kind="referral">Make a referral <ArrowRight aria-hidden="true" /></ReferralTrigger>
-          </div>
-          <details className="scene-mobile-nav">
-            <summary aria-label="Open navigation">
-              <Menu className="menu-open-icon" aria-hidden="true" />
-              <X className="menu-close-icon" aria-hidden="true" />
-              <span>Menu</span>
-            </summary>
-            <div className="scene-mobile-panel">
-              <a href="#why-refer">Why refer</a>
-              <a href="#customer-program">Customer program</a>
-              <a href="#worker-program">Worker program</a>
-              <a href="#resources">Worker guide</a>
-              <ReferralTrigger kind="referral">Make a referral <ArrowRight aria-hidden="true" /></ReferralTrigger>
-            </div>
-          </details>
-        </header>
-
         <motion.div className="scene-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
           <p className="scene-kicker">Snowplow referral program</p>
           <h1>Refer Customers.<br />Refer Workers.<br /><em>Get Rewarded.</em></h1>
@@ -240,6 +212,7 @@ export default function HomePage() {
       </footer>
 
       <ComingSoonModal />
-    </main>
+      </main>
+    </>
   );
 }
