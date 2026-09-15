@@ -3,9 +3,14 @@
 import * as React from "react";
 import { ArrowRight, CheckCircle2, X } from "lucide-react";
 
-type ReferralKind = "customer" | "worker" | "referral";
+export type ReferralKind = "customer" | "worker" | "referral";
 
 const eventName = "reliable-referral-preview";
+
+/** Opens the "Coming soon" preview modal, e.g. from a preview form's submit. */
+export function openReferralPreview(kind: ReferralKind) {
+  window.dispatchEvent(new CustomEvent(eventName, { detail: { kind } }));
+}
 
 export function ReferralTrigger({
   className,
@@ -20,7 +25,7 @@ export function ReferralTrigger({
     <button
       className={className}
       type="button"
-      onClick={() => window.dispatchEvent(new CustomEvent(eventName, { detail: { kind } }))}
+      onClick={() => openReferralPreview(kind)}
     >
       {children}
     </button>

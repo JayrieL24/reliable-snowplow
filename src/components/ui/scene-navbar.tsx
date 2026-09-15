@@ -1,19 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import * as React from "react";
 import { ReferralTrigger } from "@/components/ui/coming-soon";
 
+/* Page routes, handled by Next.js client-side routing. `match` is the pathname that marks a
+   link as the current page. */
 const links = [
-  ["Why refer", "#why-refer"],
-  ["Customer program", "#customer-program"],
-  ["Worker program", "#worker-program"],
-  ["Worker guide", "#resources"],
+  { label: "Home", href: "/", match: "/" },
+  { label: "Refer a customer", href: "/refer-a-customer", match: "/refer-a-customer" },
+  { label: "Refer a worker", href: "/refer-a-worker", match: "/refer-a-worker" },
+  { label: "Worker guide", href: "/#resources", match: null },
 ] as const;
 
 export function SceneNavbar() {
   const [open, setOpen] = React.useState(false);
+  const pathname = usePathname();
+  const isCurrent = (match: string | null) => match !== null && pathname === match;
+
+  // Close the drawer after navigating to another page.
+  React.useEffect(() => setOpen(false), [pathname]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -35,12 +44,14 @@ export function SceneNavbar() {
   return (
     <>
       <header className="scene-header">
-        <a className="scene-brand" href="#top" aria-label="Snowplow Referrals home">
+        <Link className="scene-brand" href="/" aria-label="Snowplow Referrals home">
           <Image className="site-wordmark" src="/images/snowplow-referrals-wordmark.svg" alt="Snowplow Referrals" width={390} height={64} priority />
-        </a>
+        </Link>
 
         <nav className="scene-desktop-nav" aria-label="Primary navigation">
-          {links.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          {links.map(({ label, href, match }) => (
+            <Link key={label} href={href} aria-current={isCurrent(match) ? "page" : undefined}>{label}</Link>
+          ))}
         </nav>
 
         <div className="scene-header-actions">
@@ -77,8 +88,8 @@ export function SceneNavbar() {
         </div>
 
         <nav aria-label="Mobile navigation">
-          {links.map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setOpen(false)}>{label}<ArrowRight aria-hidden="true" /></a>
+          {links.map(({ label, href, match }) => (
+            <Link key={label} href={href} aria-current={isCurrent(match) ? "page" : undefined} onClick={() => setOpen(false)}>{label}<ArrowRight aria-hidden="true" /></Link>
           ))}
         </nav>
 
