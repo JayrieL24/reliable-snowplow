@@ -89,7 +89,7 @@ export default function ReferACustomerPage() {
               <p className="clean-kicker">Who to refer</p>
               <h2 id="cust-gallery-title">Commercial properties <em>we protect.</em></h2>
             </div>
-            <p>Reliable is looking for commercial customers, from single sites to entire portfolios. Turn the deck to see why each type matters.</p>
+            <p>Swipe through the commercial property types Reliable serves, from single sites to entire portfolios.</p>
           </div>
           <SectorCarousel />
         </motion.section>

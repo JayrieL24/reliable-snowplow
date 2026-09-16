@@ -123,7 +123,6 @@ export function CustomerReferralForm() {
           <button className="customer-step-next" type="submit">Send referral<ArrowRight aria-hidden="true" /></button>
         )}
       </div>
-      <p className="form-note">This form is currently in preview.</p>
     </form>
   );
 }

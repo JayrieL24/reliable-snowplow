@@ -27,7 +27,7 @@ export function ServicesShowcase() {
             <h2 id="work-scroll-title">The work we&apos;re <em>hiring for.</em></h2>
           </div>
           <div className="work-scroll-intro">
-            <p>Browse every open role. Scroll sideways, find the right fit, then refer someone directly to that position.</p>
+            <p>Browse the open roles, find the right fit, and refer someone directly to that position.</p>
             <div className="work-scroll-arrows" aria-label="Scroll job cards">
               <button type="button" onClick={() => scrollCards(-1)} aria-label="Scroll to previous positions"><ArrowLeft aria-hidden="true" /></button>
               <button type="button" onClick={() => scrollCards(1)} aria-label="Scroll to next positions"><ArrowRight aria-hidden="true" /></button>

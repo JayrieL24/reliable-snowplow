@@ -88,7 +88,6 @@ export function WorkerReferralForm() {
         <span>I have permission to share this person&apos;s contact information with Reliable.</span>
       </label>
       <button type="submit" className="submit-button">Send referral <ArrowRight aria-hidden="true" /></button>
-      <p className="form-note">Forms are in preview. Submitting shows what happens next.</p>
     </form>
   );
 }

@@ -78,12 +78,20 @@ export function SectorCarousel() {
   const [snap, setSnap] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
   const [reducedMotion, setReducedMotion] = React.useState(false);
+  const [compact, setCompact] = React.useState(false);
   const deck = React.useRef<HTMLDivElement>(null);
+  const swipeStart = React.useRef<{ x: number; y: number } | null>(null);
+  const swiped = React.useRef(false);
   const slideWidth = useSlideWidth(deck);
   const index = wrap(slide);
 
   React.useEffect(() => {
     setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+    const compactQuery = window.matchMedia("(max-width: 560px)");
+    const syncCompact = () => setCompact(compactQuery.matches);
+    compactQuery.addEventListener("change", syncCompact);
+    syncCompact();
 
     const slug = new URLSearchParams(window.location.search).get("property");
     const requested = SECTORS.findIndex((sector) => sector.slug === slug);
@@ -91,6 +99,8 @@ export function SectorCarousel() {
       setSlide(START + requested);
       setPaused(true);
     }
+
+    return () => compactQuery.removeEventListener("change", syncCompact);
   }, []);
 
   /* Once the deck has walked out of the middle copy, step back to the matching slide in it.
@@ -112,10 +122,10 @@ export function SectorCarousel() {
   }, [snap]);
 
   React.useEffect(() => {
-    if (paused || reducedMotion) return;
+    if (paused || reducedMotion || compact) return;
     const timer = window.setTimeout(() => setSlide((s) => s + 1), INTERVAL_MS);
     return () => window.clearTimeout(timer);
-  }, [slide, paused, reducedMotion]);
+  }, [slide, paused, reducedMotion, compact]);
 
   /** Moves to a property by the shorter way round, rather than back through the list. */
   const goTo = (target: number) => {
@@ -126,6 +136,27 @@ export function SectorCarousel() {
   };
 
   const sector = SECTORS[index];
+
+  const move = (direction: number) => {
+    setPaused(true);
+    setSlide((current) => current + direction);
+  };
+
+  const finishSwipe = (event: React.PointerEvent<HTMLElement>) => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start) return;
+
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) < 36 || Math.abs(dx) <= Math.abs(dy)) return;
+
+    swiped.current = true;
+    move(dx < 0 ? 1 : -1);
+    window.setTimeout(() => {
+      swiped.current = false;
+    }, 0);
+  };
 
   return (
     <div
@@ -187,6 +218,39 @@ export function SectorCarousel() {
         </button>
       </div>
       </div>
+
+      <article
+        className="cust-carousel-mobile"
+        aria-live="polite"
+        onPointerDown={(event) => {
+          swipeStart.current = { x: event.clientX, y: event.clientY };
+        }}
+        onPointerUp={finishSwipe}
+        onPointerCancel={() => {
+          swipeStart.current = null;
+        }}
+        onClickCapture={(event) => {
+          if (!swiped.current) return;
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+      >
+        <div className="cust-carousel-mobile-media">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={sector.card} alt={`${sector.name}: ${sector.detail}`} draggable={false} />
+          <span>{pad(index + 1)} / {pad(COUNT)}</span>
+        </div>
+        <div className="cust-carousel-mobile-body">
+          <h3>{sector.name}</h3>
+          <p className="cust-carousel-mobile-lede">{sector.detail}</p>
+          <p className="cust-carousel-mobile-why">{sector.why}</p>
+          <p className="cust-carousel-mobile-services">{sector.services.join(" · ")}</p>
+          <a className="scene-primary" href="#referral-form">
+            Refer {article(sector.cta)} {sector.cta} <ArrowRight aria-hidden="true" />
+          </a>
+          <p className="cust-carousel-swipe">Swipe left or right to see another property</p>
+        </div>
+      </article>
 
       <div className="cust-carousel-detail" aria-live="polite">
         <p className="cust-carousel-count">

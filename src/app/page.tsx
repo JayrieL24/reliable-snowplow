@@ -250,7 +250,7 @@ export default function HomePage() {
           texture runs unbroken from one into the other. */}
       <div className="closing-band">
         {/* Referral CTA: a thin, full-bleed photo banner under the light process band. */}
-        <motion.section className="referral-cta referral-cta-light" id="make-a-referral" aria-labelledby="referral-cta-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+        <section className="referral-cta referral-cta-light" id="make-a-referral" aria-labelledby="referral-cta-title">
           <div className="referral-cta-inner">
             <div className="referral-cta-copy">
               <p className="clean-kicker">Ready to make the connection?</p>
@@ -265,7 +265,7 @@ export default function HomePage() {
               <a className="scene-secondary" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         <FaqSection
           items={GENERAL_FAQS}
