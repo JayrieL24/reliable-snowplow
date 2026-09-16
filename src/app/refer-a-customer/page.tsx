@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import * as motion from "motion/react-client";
-import { ArrowRight, Award, CheckCircle2, Handshake, MapPin, Phone, PhoneCall, Route, Ruler, ShieldCheck, Timer, Truck } from "lucide-react";
+import { ArrowRight, Award, Building2, CheckCircle2, Clock3, Handshake, HardHat, MapPin, Phone, Route, ShieldCheck, Timer, Truck } from "lucide-react";
 import { ComingSoonModal } from "@/components/ui/coming-soon";
-import { CustomerReferralForm } from "@/components/ui/customer-referral-form";
-import { CustomerSectorGallery } from "@/components/ui/customer-sector-gallery";
-import { OhioMap } from "@/components/ui/ohio-locations-layer";
+import { FaqSection } from "@/components/ui/faq-section";
 import { SceneNavbar } from "@/components/ui/scene-navbar";
+import { SectorCarousel } from "@/components/ui/sector-carousel";
 import { SiteFooter } from "@/components/ui/site-footer";
+import { UsServiceMap } from "@/components/ui/us-service-map";
 import { VideoLightbox } from "@/components/ui/video-lightbox";
 import { CUSTOMER_FAQS, RELIABLE_PHONE, SERVICE_AREA } from "@/lib/referral-content";
 
@@ -28,7 +28,15 @@ const VALUES = [
   { icon: MapPin, title: "50 satellite locations", text: "Coverage throughout Ohio, from single sites to portfolios." },
 ];
 
-const pad = (n: number) => String(n).padStart(2, "0");
+/* Service limitations, from the client's outline: "Limited availability for route work; conditions
+   for large sites: lots the size of Walmart or larger; dedicated equipment and workers living
+   within 15 minutes of the site." The third card is the featured one, as on the home page. */
+const LIMITS = [
+  { icon: Building2, title: "Walmart-size lots", copy: "Lots the size of a Walmart or larger, from a single site up to an entire portfolio." },
+  { icon: Truck, title: "Dedicated equipment", copy: "Equipment dedicated to the site rather than shared across a route." },
+  { icon: HardHat, title: "Crews 15 minutes away", copy: "Workers who live within 15 minutes of the site, so response stays fast." },
+  { icon: Route, title: "Limited route work", copy: "Limited availability for route work serving smaller sites." },
+];
 
 /* Refer a Customer page, per the client's outline: slideshow of customer types, program video,
    map of service area, selling proposition, referral fee structure, service limitations, top
@@ -37,13 +45,16 @@ export default function ReferACustomerPage() {
   return (
     <>
       <SceneNavbar />
-      <main className="page-content">
-        {/* Light daytime hero. Background: Pexels photo 36009297 by Peter Dyllong (free
-            license), a snow-covered lot beside an industrial building after a snowfall. */}
+      <main className="page-content customer-page">
+        {/* Generated light dusk scene and independent loader cutout, fading into the snow below. */}
         <section className="page-hero page-hero-light" id="top" aria-labelledby="page-hero-title">
-          <Image className="scene-background" src="/images/hero/industrial-snow-day.jpg" alt="" fill priority sizes="100vw" />
+          <Image className="scene-background" src="/images/hero/customer-commercial-dusk.webp" alt="" fill priority sizes="100vw" />
           <div className="scene-shade" aria-hidden="true" />
-          <Image className="page-hero-truck" src="/images/hero/reliable-plow.webp" alt="" width={1536} height={1024} priority />
+          <div className="customer-plow-layer" aria-hidden="true">
+            <Image src="/images/hero/customer-wheel-loader.webp" alt="" width={1536} height={1024} priority sizes="(max-width: 680px) 100vw, (max-width: 1180px) 680px, 48vw" />
+            <span className="customer-plow-glow customer-plow-beacon" />
+            <span className="customer-plow-glow customer-plow-lamp" />
+          </div>
 
           <motion.div className="page-hero-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
             <nav className="page-crumbs" aria-label="Breadcrumb">
@@ -55,8 +66,8 @@ export default function ReferACustomerPage() {
             <h1 id="page-hero-title">Refer a commercial <em>customer.</em></h1>
             <p>Know a property that needs dependable snow and ice service? Make the introduction and earn a 5% referral fee for each entity, up to $3,000 per commercial referral.</p>
             <div className="scene-actions">
-              <a className="scene-primary" href="#referral-form">Start a referral <ArrowRight aria-hidden="true" /></a>
-              <a className="scene-secondary" href={RELIABLE_PHONE.href}><Phone aria-hidden="true" /> Call {RELIABLE_PHONE.label}</a>
+              <a className="scene-primary" href={RELIABLE_PHONE.href}><Phone aria-hidden="true" /> Call {RELIABLE_PHONE.label} to refer</a>
+              <a className="scene-secondary" href="#property-types">See who to refer <ArrowRight aria-hidden="true" /></a>
             </div>
             <dl className="page-hero-stats">
               <div><dt>5%</dt><dd>referral fee per entity</dd></div>
@@ -74,25 +85,41 @@ export default function ReferACustomerPage() {
               <p className="clean-kicker">Who to refer</p>
               <h2 id="cust-gallery-title">Commercial properties <em>we protect.</em></h2>
             </div>
-            <p>Reliable is looking for commercial customers, from single sites to entire portfolios. Pick a property type to see why it matters.</p>
+            <p>Reliable is looking for commercial customers, from single sites to entire portfolios. Turn the deck to see why each type matters.</p>
           </div>
-          <CustomerSectorGallery />
+          <SectorCarousel />
         </motion.section>
 
-        {/* Video of me explaining the program. TODO: swap for the client's program video once
-            it's recorded; the Next Day Pay video stands in until then. */}
-        <motion.section className="cust-video" id="program-video" aria-labelledby="cust-video-title" {...reveal}>
-          <p className="clean-kicker">Program video</p>
-          <h2 id="cust-video-title">Hear how the customer referral program <em>works.</em></h2>
-          <p>A personal walkthrough of the program, the customers Reliable is looking for and what happens after you refer.</p>
-          <VideoLightbox youtubeId="oWfCgCu-XPY" title="Next day pay at Reliable" thumbnail="/images/next-day-pay-video-thumb.jpg" caption="Watch: Next day pay" note="Program walkthrough coming soon" />
+        {/* Video of me explaining the program, with the same ground covered in writing beside it. */}
+        {/* Same frame as the home page's introductory video: copy on the left, the video
+            running off the right edge of the page. */}
+        <motion.section className="intro-video" id="program-video" aria-labelledby="cust-video-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="intro-video-copy">
+            <p className="clean-kicker">Program video</p>
+            <h2 id="cust-video-title">Hear how the referral program <em>works.</em></h2>
+            <p>A walkthrough of the program, the customers Reliable is looking for and what happens once you make an introduction.</p>
+            <div className="intro-video-points">
+              <span><CheckCircle2 aria-hidden="true" /> 5% per entity, up to $3,000</span>
+              <span><CheckCircle2 aria-hidden="true" /> Walmart-size lots and portfolios</span>
+              <span><CheckCircle2 aria-hidden="true" /> Contact within one business day</span>
+            </div>
+          </div>
+          {/* TODO: swap for the client's customer-program walkthrough once it's recorded.
+              This is Reliable's Next Day Pay / SnowFightersWanted.com spot, standing in. */}
+          <VideoLightbox
+            youtubeId="EUdzfTqLTu0"
+            title="Reliable Snow Plowing — Next Day Pay"
+            thumbnail="/images/customer-program-video-thumb.webp"
+            caption="Watch: Reliable Snow Plowing"
+            note="Customer program walkthrough coming soon"
+          />
         </motion.section>
 
-        {/* Selling proposition, referral fee structure and service limitations. */}
+        {/* Selling proposition for customers, then fee structure and service limitations. */}
         <motion.section className="cust-section cust-terms" id="why-reliable" aria-labelledby="cust-terms-title" {...reveal}>
           <div className="cust-head">
             <div>
-              <p className="clean-kicker">Why Reliable</p>
+              <p className="clean-kicker">Selling proposition</p>
               <h2 id="cust-terms-title">A partner your referral <em>can count on.</em></h2>
             </div>
             <p>What the customers you refer get from Reliable, what you earn, and the sites that are the best fit.</p>
@@ -123,32 +150,68 @@ export default function ReferACustomerPage() {
                 <li><CheckCircle2 aria-hidden="true" /><span>The lot must be salted when it&apos;s plowed.</span></li>
               </ul>
             </article>
-            <article className="cust-term">
-              <p className="cust-term-label">Service limitations</p>
-              <h3>The best-fit sites</h3>
-              <ul>
-                <li><Ruler aria-hidden="true" /><span>Lots the size of a Walmart or larger.</span></li>
-                <li><Truck aria-hidden="true" /><span>Dedicated equipment and workers living within 15 minutes of the site.</span></li>
-                <li><Route aria-hidden="true" /><span>Limited availability for route work with smaller sites.</span></li>
-              </ul>
-            </article>
           </div>
         </motion.section>
 
-        {/* Map of service area. */}
+        {/* Service limitations: the home page's "Why refer with Reliable?" section (same classes, same
+            icons, same mobile marquee), turned dark for the page's one navy band. */}
+        <motion.section className="cust-limits" id="service-limitations" aria-labelledby="cust-limits-title" {...reveal}>
+          <div className="snowy-heading">
+            <p className="clean-kicker">Service limitations</p>
+            <h2 id="cust-limits-title">Where Reliable can <em>take the work on.</em></h2>
+            <p>There is limited availability for route work. For larger sites, these are the conditions that let Reliable commit a dedicated crew.</p>
+          </div>
+          <div className="benefit-marquee">
+            <div className="benefit-grid">
+              {[...LIMITS, ...LIMITS].map(({ icon: Icon, title, copy }, index) => (
+                <article
+                  key={`${title}-${index}`}
+                  className={`${index % LIMITS.length === 2 ? "benefit-card benefit-card-featured" : "benefit-card"}${index >= LIMITS.length ? " benefit-card-clone" : ""}`}
+                  aria-hidden={index >= LIMITS.length ? "true" : undefined}
+                >
+                  <span><Icon aria-hidden="true" /></span>
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="proof-row" aria-label="Reliable at a glance">
+            <p><MapPin aria-hidden="true" /><span><strong>All of Ohio</strong>50 satellite locations</span></p>
+            <p><Clock3 aria-hidden="true" /><span><strong>Quick response</strong>Within one business day</span></p>
+            <p><ShieldCheck aria-hidden="true" /><span><strong>Family owned</strong>40 years of experience</span></p>
+          </div>
+        </motion.section>
+
+        {/* Map of service area: the country, with Ohio lifted out of it and every satellite
+            location pinned. Floats on the section rather than sitting in a panel. */}
         <motion.section className="cust-section cust-map" id="service-area" aria-labelledby="cust-map-title" {...reveal}>
           <div className="cust-map-grid">
-            <div className="cust-map-panel" aria-hidden="true"><OhioMap idPrefix="cust-ohio" /></div>
-            <div>
+            <figure className="cust-map-figure">
+              <UsServiceMap />
+              <figcaption className="cust-map-callout">
+                <span className="cust-map-callout-dot" aria-hidden="true" />
+                <span className="cust-map-callout-copy">
+                  <small>Statewide coverage</small>
+                  <strong>50 satellite locations across Ohio</strong>
+                </span>
+              </figcaption>
+            </figure>
+
+            <div className="cust-map-copy">
               <p className="clean-kicker">Map of service area</p>
               <h2 id="cust-map-title">All of Ohio, from <em>50 satellite locations.</em></h2>
-              <p className="cust-map-lede">Crews are never more than 15 minutes from the properties they protect. Reliable serves these areas and counties:</p>
-              <ul className="cust-map-cities" aria-label="Metro areas">
+              <p className="cust-map-lede">Reliable works one state, thoroughly. Crews are never more than 15 minutes from the properties they protect.</p>
+
+              <h3>Metro areas</h3>
+              <ul className="cust-map-cities">
                 {SERVICE_AREA.cities.map((city) => (
                   <li key={city}><MapPin aria-hidden="true" /> {city} area</li>
                 ))}
               </ul>
-              <ul className="cust-map-counties" aria-label="Counties">
+
+              <h3>Counties served</h3>
+              <ul className="cust-map-counties">
                 {SERVICE_AREA.counties.map((county) => (
                   <li key={county}>{county} County</li>
                 ))}
@@ -157,52 +220,36 @@ export default function ReferACustomerPage() {
           </div>
         </motion.section>
 
-        {/* Referral form (preview). */}
-        <motion.section className="cust-section cust-form" id="referral-form" aria-labelledby="cust-form-title" {...reveal}>
-          <div className="cust-form-copy">
-            <p className="clean-kicker">Make the introduction</p>
-            <h2 id="cust-form-title">Refer a customer in <em>a few minutes.</em></h2>
-            <p>Share the basics about the property and who to contact. Here&apos;s what happens next:</p>
-            <ol className="cust-form-steps">
-              <li><span>1</span><div><strong>Automatic confirmation</strong>You get a reply confirming your referral arrived.</div></li>
-              <li><span>2</span><div><strong>Program details</strong>A short PDF, 2 to 5 pages, explains how the program works.</div></li>
-              <li><span>3</span><div><strong>Contact within one business day</strong>The team reaches out and takes it from there.</div></li>
-            </ol>
-          </div>
-          <CustomerReferralForm />
-        </motion.section>
-
         {/* Top questions for customers. */}
-        <motion.section className="cust-section cust-faq" id="faq" aria-labelledby="cust-faq-title" {...reveal}>
-          <div className="cust-head">
-            <div>
-              <p className="clean-kicker">Customer FAQ</p>
-              <h2 id="cust-faq-title">Top questions <em>from customers.</em></h2>
-            </div>
-            <p>Straight answers about who Reliable serves, where, and what happens after you make an introduction.</p>
-          </div>
-          <ol className="cust-faq-grid">
-            {CUSTOMER_FAQS.map((item, i) => (
-              <li key={item.id}>
-                <span className="cust-faq-num" aria-hidden="true">{pad(i + 1)}</span>
-                <h3>{item.q}</h3>
-                <p>{item.a}</p>
-              </li>
-            ))}
-          </ol>
-        </motion.section>
+        <FaqSection
+          items={CUSTOMER_FAQS}
+          eyebrow="Customer FAQ"
+          heading={<>Top questions <em>from customers.</em></>}
+          intro="Straight answers about who Reliable serves, where, and what happens after you make an introduction."
+        />
 
-        {/* Click to call. */}
-        <section className="cust-call" aria-labelledby="cust-call-title">
-          <div>
-            <p className="cust-call-kicker">Click to call</p>
-            <h2 id="cust-call-title">Rather talk it through?</h2>
+        {/* Closing CTA and click to call, in the site's full-bleed photo banner. */}
+        <motion.section className="cust-cta" id="make-a-referral" aria-labelledby="cust-cta-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="cust-cta-inner">
+            <div className="cust-cta-copy">
+              <p className="clean-kicker">Click to call</p>
+              <h2 id="cust-cta-title">Know a commercial <em>property?</em></h2>
+              <p>Make the introduction and Reliable takes it from there. No form to fill in — one call is enough.</p>
+              <a className="cust-cta-number" href={RELIABLE_PHONE.href}>
+                <Phone aria-hidden="true" /> {RELIABLE_PHONE.label}
+              </a>
+              <a className="cust-cta-link" href="#property-types">See who to refer <ArrowRight aria-hidden="true" /></a>
+            </div>
+
+            <figure className="cust-cta-figure">
+              <Image src="/images/reliable-equipment.png" alt="A Reliable plow truck and salt spreader working a lot during a night snowfall" width={633} height={422} sizes="(max-width: 900px) 88vw, 560px" />
+              <figcaption>
+                <span><strong>5%</strong>per entity, up to $3,000</span>
+                <span><strong>1 day</strong>we contact your referral</span>
+              </figcaption>
+            </figure>
           </div>
-          <div className="cust-call-actions">
-            <a className="cust-call-number" href={RELIABLE_PHONE.href}><PhoneCall aria-hidden="true" /> Reliable {RELIABLE_PHONE.label}</a>
-            <a className="section-cta section-cta-dark" href="#referral-form">Start a referral <ArrowRight aria-hidden="true" /></a>
-          </div>
-        </section>
+        </motion.section>
 
         <SiteFooter />
         <ComingSoonModal />

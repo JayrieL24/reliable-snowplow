@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PlowTraces } from "@/components/ui/plow-traces";
 
 export type FaqItem = { id: string; q: string; a: React.ReactNode };
 
@@ -59,7 +58,6 @@ export function FaqSection({
 
   return (
     <section className={cn("faq", className)} id="faq">
-      <PlowTraces className="faq-traces" />
 
       <div className="faq-inner">
         <div className="faq-copy">
