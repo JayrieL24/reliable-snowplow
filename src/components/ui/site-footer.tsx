@@ -38,7 +38,7 @@ export function SiteFooter() {
 
         <div className="footer-contact">
           <p className="footer-label">Get in touch</p>
-          <p className="footer-location"><MapPin aria-hidden="true" /><span><strong>Serving Northeast Ohio</strong>Customer and worker referrals</span></p>
+          <p className="footer-location"><MapPin aria-hidden="true" /><span><strong>Serving all of Ohio</strong>Customer and worker referrals</span></p>
           <ReferralTrigger className="footer-referral" kind="referral">Make a referral <ArrowRight aria-hidden="true" /></ReferralTrigger>
         </div>
       </div>
