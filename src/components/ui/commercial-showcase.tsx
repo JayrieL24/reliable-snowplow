@@ -96,8 +96,8 @@ export function CommercialShowcase({
 
   useEffect(() => {
     if (engaged) return;
-    // Auto-advance is motion nobody asked for, so readers who asked for less don't get it.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Keep the compact mobile layout still until the reader swipes or uses the arrows.
+    if (window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 1040px)").matches) return;
     const id = setInterval(() => go(1), AUTOPLAY_MS);
     return () => clearInterval(id);
   }, [engaged, go]);
@@ -143,6 +143,12 @@ export function CommercialShowcase({
 
         <div className="showcase-stage" role="group" aria-roledescription="carousel" aria-label={`${kicker}: ${noun} carousel`}>
           <div className="showcase-deck">
+            <div className="showcase-mobile-summary">
+              <p>{pad(active + 1)} <span>/ {pad(count)}</span></p>
+              <h3>{sector.name}</h3>
+              {arrows("showcase-arrows showcase-mobile-arrows")}
+              <span>{sector.detail}</span>
+            </div>
             <ul className="showcase-stack" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => (dragRef.current = null)}>
               {items.map((item, i) => {
                 const depth = (i - active + count) % count;

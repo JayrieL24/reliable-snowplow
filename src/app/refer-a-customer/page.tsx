@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import * as motion from "motion/react-client";
-import { ArrowRight, Award, Building2, CheckCircle2, Clock3, Handshake, HardHat, MapPin, Phone, Route, ShieldCheck, Timer, Truck } from "lucide-react";
+import { ArrowRight, Award, Building2, CheckCircle2, Clock3, Handshake, HardHat, MapPin, PhoneCall, Route, ShieldCheck, Timer, Truck } from "lucide-react";
 import { ComingSoonModal } from "@/components/ui/coming-soon";
+import { CustomerReferralForm } from "@/components/ui/customer-referral-form";
 import { FaqSection } from "@/components/ui/faq-section";
 import { SceneNavbar } from "@/components/ui/scene-navbar";
 import { SectorCarousel } from "@/components/ui/sector-carousel";
@@ -40,7 +41,7 @@ const LIMITS = [
 
 /* Refer a Customer page, per the client's outline: slideshow of customer types, program video,
    map of service area, selling proposition, referral fee structure, service limitations, top
-   questions for customers and click to call. */
+   questions for customers and a customer referral form. */
 export default function ReferACustomerPage() {
   return (
     <>
@@ -57,26 +58,29 @@ export default function ReferACustomerPage() {
           </div>
 
           <motion.div className="page-hero-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-            <nav className="page-crumbs" aria-label="Breadcrumb">
-              <a href="/">Home</a>
-              <span aria-hidden="true">/</span>
-              <span aria-current="page">Refer a customer</span>
-            </nav>
             <p className="scene-kicker">Customer referral program</p>
             <h1 id="page-hero-title">Refer a commercial <em>customer.</em></h1>
             <p>Know a property that needs dependable snow and ice service? Make the introduction and earn a 5% referral fee for each entity, up to $3,000 per commercial referral.</p>
             <div className="scene-actions">
-              <a className="scene-primary" href={RELIABLE_PHONE.href}><Phone aria-hidden="true" /> Call {RELIABLE_PHONE.label} to refer</a>
+              <a className="scene-primary" href="#referral-form">Start a referral <ArrowRight aria-hidden="true" /></a>
               <a className="scene-secondary" href="#property-types">See who to refer <ArrowRight aria-hidden="true" /></a>
             </div>
-            <dl className="page-hero-stats">
-              <div><dt>5%</dt><dd>referral fee per entity</dd></div>
-              <div><dt>$3,000</dt><dd>max per commercial referral</dd></div>
-              <div><dt>1 day</dt><dd>business-day follow-up</dd></div>
-              <div><dt>50</dt><dd>satellite locations</dd></div>
-            </dl>
+            <ul className="customer-hero-proof" aria-label="Customer referral program highlights">
+              <li><strong>5%</strong><span>Up to $3,000</span></li>
+              <li><strong>1 business day</strong><span>Reliable follows up</span></li>
+              <li><strong>50 locations</strong><span>Coverage across Ohio</span></li>
+            </ul>
           </motion.div>
         </section>
+
+        <motion.section className="customer-form-page" id="referral-form" aria-labelledby="cust-form-title" {...reveal}>
+          <div className="customer-form-page-intro">
+            <p className="clean-kicker">Customer referral form</p>
+            <h2 id="cust-form-title">Make the introduction.</h2>
+            <p>Three short steps. Reliable confirms the referral and follows up within one business day.</p>
+          </div>
+          <CustomerReferralForm />
+        </motion.section>
 
         {/* Slide show of various types of customers. */}
         <motion.section className="cust-section cust-gallery-section" id="property-types" aria-labelledby="cust-gallery-title" {...reveal}>
@@ -228,28 +232,20 @@ export default function ReferACustomerPage() {
           intro="Straight answers about who Reliable serves, where, and what happens after you make an introduction."
         />
 
-        {/* Closing CTA and click to call, in the site's full-bleed photo banner. */}
-        <motion.section className="cust-cta" id="make-a-referral" aria-labelledby="cust-cta-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="cust-cta-inner">
-            <div className="cust-cta-copy">
-              <p className="clean-kicker">Click to call</p>
-              <h2 id="cust-cta-title">Know a commercial <em>property?</em></h2>
-              <p>Make the introduction and Reliable takes it from there. No form to fill in — one call is enough.</p>
-              <a className="cust-cta-number" href={RELIABLE_PHONE.href}>
-                <Phone aria-hidden="true" /> {RELIABLE_PHONE.label}
-              </a>
-              <a className="cust-cta-link" href="#property-types">See who to refer <ArrowRight aria-hidden="true" /></a>
-            </div>
-
-            <figure className="cust-cta-figure">
-              <Image src="/images/reliable-equipment.png" alt="A Reliable plow truck and salt spreader working a lot during a night snowfall" width={633} height={422} sizes="(max-width: 900px) 88vw, 560px" />
-              <figcaption>
-                <span><strong>5%</strong>per entity, up to $3,000</span>
-                <span><strong>1 day</strong>we contact your referral</span>
-              </figcaption>
-            </figure>
+        {/* Click to call Reliable, per the client's outline. Sits after the FAQ so the
+            phone is the last thing offered before the footer. */}
+        <section className="cust-call" aria-labelledby="cust-call-title">
+          <div>
+            <p className="cust-call-kicker">Click to call</p>
+            <h2 id="cust-call-title">Rather talk it through?</h2>
           </div>
-        </motion.section>
+          <div className="cust-call-actions">
+            <a className="cust-call-number" href={RELIABLE_PHONE.href} aria-label={`Call Reliable Snow Plowing at ${RELIABLE_PHONE.label}`}>
+              <PhoneCall aria-hidden="true" /> {RELIABLE_PHONE.label}
+            </a>
+            <a className="section-cta section-cta-dark" href="#referral-form">Start a referral <ArrowRight aria-hidden="true" /></a>
+          </div>
+        </section>
 
         <SiteFooter />
         <ComingSoonModal />

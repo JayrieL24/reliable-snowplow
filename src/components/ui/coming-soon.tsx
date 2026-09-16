@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, CheckCircle2, X } from "lucide-react";
 
 export type ReferralKind = "customer" | "worker" | "referral";
@@ -21,14 +23,25 @@ export function ReferralTrigger({
   kind: ReferralKind;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const generalHref = pathname === "/refer-a-customer"
+    ? "/refer-a-customer#referral-form"
+    : pathname === "/refer-a-worker"
+      ? "/refer-a-worker#referral-form"
+      : "/#make-a-referral";
+  const href = kind === "customer"
+    ? "/refer-a-customer#referral-form"
+    : kind === "worker"
+      ? "/refer-a-worker#referral-form"
+      : generalHref;
+
   return (
-    <button
+    <Link
       className={className}
-      type="button"
-      onClick={() => openReferralPreview(kind)}
+      href={href}
     >
       {children}
-    </button>
+    </Link>
   );
 }
 

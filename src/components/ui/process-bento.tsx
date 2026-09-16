@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Building2, CheckCircle2, FileText, HardHat, PhoneCall, Send, Truck } from "lucide-react";
-import { RELIABLE_PHONE } from "@/lib/referral-content";
 
 /* What a referrer can send us, as the tiles a cursor picks from. */
 const REFER_TILES = [
@@ -202,7 +201,7 @@ function CallPanel() {
           </span>
         </div>
         <span className="bento-chip bento-chip-call">
-          <span className="bento-chip-dot" /> Reliable &middot; {RELIABLE_PHONE.label}
+          <span className="bento-chip-dot" /> Reliable response team
         </span>
       </div>
 

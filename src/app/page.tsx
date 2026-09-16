@@ -10,21 +10,20 @@ import {
   Download,
   FileText,
   Gift,
+  Handshake,
   HardHat,
   MapPin,
-  Phone,
   ShieldCheck,
   Users,
   Zap,
 } from "lucide-react";
-import { ComingSoonModal, ReferralTrigger } from "@/components/ui/coming-soon";
 import { FaqSection } from "@/components/ui/faq-section";
 import { ProcessBento } from "@/components/ui/process-bento";
 import { SceneNavbar } from "@/components/ui/scene-navbar";
 import { ServicesShowcase } from "@/components/ui/services-showcase";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { VideoLightbox } from "@/components/ui/video-lightbox";
-import { GENERAL_FAQS, RELIABLE_SERVICES } from "@/lib/referral-content";
+import { GENERAL_FAQS } from "@/lib/referral-content";
 
 /* Benefit copy only states what the client's changelist says. */
 const benefits = [
@@ -47,8 +46,8 @@ export default function HomePage() {
           <h1>Refer Customers.<br />Refer Workers.<br /><em>Get Rewarded.</em></h1>
           <p>Help grow a safer, stronger, snow-free community.<br />{" "}Two ways to make a difference. One great program.</p>
           <div className="scene-actions">
-            <ReferralTrigger className="scene-primary" kind="customer">Refer a customer <ArrowRight aria-hidden="true" /></ReferralTrigger>
-            <ReferralTrigger className="scene-secondary" kind="worker">Refer a worker <ArrowRight aria-hidden="true" /></ReferralTrigger>
+            <a className="scene-primary" href="/refer-a-customer#referral-form">Refer a customer <ArrowRight aria-hidden="true" /></a>
+            <a className="scene-secondary" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
           </div>
         </motion.div>
 
@@ -61,16 +60,16 @@ export default function HomePage() {
         </div>
         <Image className="truck-layer" src="/images/hero/reliable-plow.webp" alt="Commercial snowplow truck clearing snow" width={1536} height={1024} priority />
 
-        <ReferralTrigger className="scene-program scene-customer" kind="customer">
+        <a className="scene-program scene-customer" href="/refer-a-customer#referral-form">
           <Users aria-hidden="true" />
           <span><small>Homeowners</small><strong>Refer a Customer</strong><em>Help a neighbor get reliable snow removal.</em></span>
           <ArrowRight aria-hidden="true" />
-        </ReferralTrigger>
-        <ReferralTrigger className="scene-program scene-worker" kind="worker">
+        </a>
+        <a className="scene-program scene-worker" href="/refer-a-worker#referral-form">
           <HardHat aria-hidden="true" />
           <span><small>Skilled professionals</small><strong>Refer a Worker</strong><em>Connect great people with winter work.</em></span>
           <ArrowRight aria-hidden="true" />
-        </ReferralTrigger>
+        </a>
 
         <div className="scene-trust" aria-label="Program benefits">
           <p><Users aria-hidden="true" /><span>Stronger<br />communities</span></p>
@@ -156,14 +155,10 @@ export default function HomePage() {
         <Image className="reliable-link-bg" src="/images/reliable-facility.png" alt="Aerial view of Reliable Snow Plowing's headquarters with its fleet of plow trucks" fill sizes="100vw" />
         <div className="reliable-link-copy">
           <p className="clean-kicker">Reliable Snowplowing</p>
-          <h2 id="reliable-link-title">See <em>Reliable</em> Site.</h2>
-          <p>Explore the snow and ice services behind every referral, from single sites to entire portfolios.</p>
-          <ul className="reliable-services">
-            {RELIABLE_SERVICES.map((service) => <li key={service}>{service}</li>)}
-          </ul>
+          <h2 id="reliable-link-title">Explore Reliable&apos;s <em>snow and ice services.</em></h2>
+          <p>See how Reliable protects commercial properties across Ohio, from single locations to entire portfolios.</p>
           <div className="reliable-link-actions">
-            <a className="section-cta" href="https://www.reliablesnowplowing.net" target="_blank" rel="noopener noreferrer">Visit Reliable Snowplowing <ArrowUpRight aria-hidden="true" /></a>
-            <a className="reliable-call" href="tel:+13304677273"><Phone aria-hidden="true" /> Call Reliable 330-467-7273</a>
+            <a className="section-cta" href="https://www.reliablesnowplowing.net" target="_blank" rel="noopener noreferrer">View commercial services <ArrowUpRight aria-hidden="true" /></a>
           </div>
         </div>
       </motion.section>
@@ -220,15 +215,16 @@ export default function HomePage() {
           <h2>Refer a <em>Customer</em></h2>
           <p className="program-lede">Know a business or property manager with a commercial site that needs dependable snow and ice service? Make the introduction and earn a reward.</p>
           <ul className="program-points">
-            <li><Building2 aria-hidden="true" /><span><strong>Commercial properties</strong>Medical, distribution, retail, transportation, airports, Class A office and portfolios.</span></li>
-            <li><FileText aria-hidden="true" /><span><strong>Simple introduction</strong>Share the basics in just a few minutes when forms launch.</span></li>
-            <li><Zap aria-hidden="true" /><span><strong>Contact within one business day</strong>You get an automatic confirmation, then the team reaches out.</span></li>
-            <li><Gift aria-hidden="true" /><span><strong>5% referral fee</strong>Up to $3,000 per commercial referral.</span></li>
+            <li><ShieldCheck aria-hidden="true" /><span><strong>Safety first</strong>Providing safety throughout Ohio all winter.</span></li>
+            <li><Clock3 aria-hidden="true" /><span><strong>Never more than 15 minutes away</strong>Crews stay close to every property they protect.</span></li>
+            <li><CheckCircle2 aria-hidden="true" /><span><strong>Proven 40-year track record</strong>A proven Autopilot system stands behind every storm.</span></li>
+            <li><Handshake aria-hidden="true" /><span><strong>We make it easy</strong>One family-owned partner makes winter easier for customers.</span></li>
+            <li><MapPin aria-hidden="true" /><span><strong>50 satellite locations</strong>Coverage throughout Ohio, from single sites to portfolios.</span></li>
           </ul>
-          <a className="section-cta section-cta-dark" href="/refer-a-customer">Refer a customer <ArrowRight aria-hidden="true" /></a>
+          <a className="section-cta section-cta-dark" href="/refer-a-customer#referral-form">Refer a customer <ArrowRight aria-hidden="true" /></a>
         </motion.div>
         <motion.div className="program-visual customer-visual" initial={{ opacity: 0, x: 34, scale: 0.985 }} whileInView={{ opacity: 1, x: 0, scale: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}>
-          <Image className="generated-program-photo generated-customer-photo" src="/images/customer-referral-ohio-v2.webp" alt="Snow-covered Ohio property ready for professional winter service" fill sizes="(max-width: 1100px) 100vw, 62vw" />
+          <Image className="generated-program-photo generated-customer-photo" src="/images/customer-referral-commercial-v3.webp" alt="Reliable snowplow clearing a commercial Ohio property during fresh snowfall" fill sizes="(max-width: 1100px) 100vw, 62vw" />
         </motion.div>
       </motion.section>
 
@@ -241,12 +237,12 @@ export default function HomePage() {
           <h2>Refer a <em>Worker</em></h2>
           <p className="program-lede">Know a qualified snowplow operator or snow removal worker? Help build stronger crews for a safer winter.</p>
           <ul className="program-points">
-            <li><HardHat aria-hidden="true" /><span><strong>Qualified operators</strong>Connect the team with experienced, reliable winter workers.</span></li>
+            <li><HardHat aria-hidden="true" /><span><strong>Jobs for every experience level</strong>Some roles require no experience, while others need experienced operators.</span></li>
             <li><Gift aria-hidden="true" /><span><strong>$1 an hour, indefinitely</strong>For every hour your referred snow fighter works.</span></li>
-            <li><Users aria-hidden="true" /><span><strong>Stronger winter crews</strong>More great people means better coverage and faster response.</span></li>
-            <li><ShieldCheck aria-hidden="true" /><span><strong>Keep communities moving</strong>Play a part in safer roads and dependable winter service.</span></li>
+            <li><ShieldCheck aria-hidden="true" /><span><strong>Safety throughout Ohio</strong>Help keep properties, roads and communities safer all winter.</span></li>
+            <li><BadgeDollarSign aria-hidden="true" /><span><strong>Seasonal income</strong>Winter work provides seasonal income with next day pay for every position.</span></li>
           </ul>
-          <a className="section-cta" href="/refer-a-worker">Refer a worker <ArrowRight aria-hidden="true" /></a>
+          <a className="section-cta" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
         </motion.div>
       </motion.section>
 
@@ -265,9 +261,8 @@ export default function HomePage() {
               <li><strong>$1/hr</strong><span>for every hour a referred worker works</span></li>
             </ul>
             <div className="referral-cta-actions">
-              <a className="scene-primary" href="/refer-a-customer">Refer a customer <ArrowRight aria-hidden="true" /></a>
-              <a className="scene-secondary" href="/refer-a-worker">Refer a worker <ArrowRight aria-hidden="true" /></a>
-              <a className="referral-cta-call" href="tel:+13304677273"><Phone aria-hidden="true" /> 330-467-7273</a>
+              <a className="scene-primary" href="/refer-a-customer#referral-form">Refer a customer <ArrowRight aria-hidden="true" /></a>
+              <a className="scene-secondary" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
             </div>
           </div>
         </motion.section>
@@ -282,7 +277,6 @@ export default function HomePage() {
 
       <SiteFooter />
 
-      <ComingSoonModal />
       </main>
     </>
   );

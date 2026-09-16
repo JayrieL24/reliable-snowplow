@@ -21,8 +21,8 @@ export function SiteFooter() {
           <p className="footer-label">Quick links</p>
           <a href="/">Home</a>
           <a href="/#why-refer">Why refer</a>
-          <a href="/refer-a-customer">Refer a customer</a>
-          <a href="/refer-a-worker">Refer a worker</a>
+          <a href="/refer-a-customer#referral-form">Refer a customer</a>
+          <a href="/refer-a-worker#referral-form">Refer a worker</a>
           <a href="/#process">How it works</a>
           <a href="/#faq">FAQ</a>
         </nav>

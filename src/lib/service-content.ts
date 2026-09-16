@@ -49,6 +49,3 @@ export const SERVICE_NOTES: { icon: LucideIcon; title: string; text: string; acc
   { icon: GraduationCap, title: "No experience needed", text: "Some roles need none at all; others want experience.", accent: true },
   { icon: BadgeDollarSign, title: "Competitive rates", text: "Paid rates across all winter positions." },
 ];
-
-/* Where "Apply now!" goes: the client's hiring site, which lists every open position. */
-export const APPLY_URL = "https://www.winterworkerswanted.com/";

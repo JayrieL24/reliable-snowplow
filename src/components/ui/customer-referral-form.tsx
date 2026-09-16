@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ArrowRight, Building2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, Building2, Check } from "lucide-react";
 import { openReferralPreview } from "@/components/ui/coming-soon";
 import { SECTORS } from "@/lib/referral-content";
 
-/* Customer referral form (preview). The outline doesn't define customer fields, so these are
-   the basics the team needs to follow up. DRAFT — confirm with the client. Submitting opens
-   the "Coming soon" modal until the form has somewhere to send.
+const STEPS = ["Your details", "The property", "Contact & review"] as const;
 
-   The property type can be preselected with ?property=<slug> or by the slideshow's
-   "customer-referral-property" event. */
 export function CustomerReferralForm() {
+  const [step, setStep] = useState(0);
+  const formRef = useRef<HTMLFormElement>(null);
   const typeRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
@@ -24,62 +22,108 @@ export function CustomerReferralForm() {
     return () => window.removeEventListener("customer-referral-property", onProperty);
   }, []);
 
+  const continueToNextStep = () => {
+    const panel = formRef.current?.querySelector<HTMLElement>(`[data-form-step="${step}"]`);
+    const controls = Array.from(panel?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("input, select, textarea") ?? []);
+    const invalid = controls.find((control) => !control.checkValidity());
+    if (invalid) {
+      invalid.reportValidity();
+      return;
+    }
+    setStep((current) => Math.min(current + 1, STEPS.length - 1));
+  };
+
   return (
     <form
-      className="form-shell cust-form-shell"
+      ref={formRef}
+      className="customer-step-form"
       onSubmit={(event) => {
         event.preventDefault();
         openReferralPreview("customer");
       }}
     >
-      <div className="form-title">
-        <span><Building2 aria-hidden="true" /></span>
-        <div>
-          <p className="eyebrow">Customer referral</p>
-          <h3>Tell us about the property</h3>
+      <ol className="customer-stepper" aria-label="Referral form progress">
+        {STEPS.map((label, index) => (
+          <li key={label} className={index === step ? "is-current" : index < step ? "is-complete" : ""} aria-current={index === step ? "step" : undefined}>
+            <span>{index < step ? <Check aria-hidden="true" /> : index + 1}</span>
+            <strong>{label}</strong>
+          </li>
+        ))}
+      </ol>
+
+      <div className="customer-step-panel" data-form-step="0" hidden={step !== 0}>
+        <div className="customer-step-heading">
+          <p>Step 1 of 3</p>
+          <h3>First, tell us about you.</h3>
+          <span>We&apos;ll use this information to confirm and track your referral.</span>
         </div>
+        <fieldset>
+          <legend>Your information</legend>
+          <label className="full-field">Your name<input name="referrerName" autoComplete="name" required /></label>
+          <label>Phone<input name="referrerPhone" type="tel" autoComplete="tel" required /></label>
+          <label>Email<input name="referrerEmail" type="email" autoComplete="email" required /></label>
+        </fieldset>
       </div>
 
-      <fieldset>
-        <legend>Your information</legend>
-        <label>Your name<input name="referrerName" autoComplete="name" required /></label>
-        <label>Phone<input name="referrerPhone" type="tel" autoComplete="tel" required /></label>
-        <label className="full-field">Email<input name="referrerEmail" type="email" autoComplete="email" required /></label>
-      </fieldset>
+      <div className="customer-step-panel" data-form-step="1" hidden={step !== 1}>
+        <div className="customer-step-heading">
+          <p>Step 2 of 3</p>
+          <h3>Which property are you referring?</h3>
+          <span>Basic property details help Reliable determine the right next step.</span>
+        </div>
+        <fieldset>
+          <legend>Property information</legend>
+          <label className="full-field">Business or property name<input name="propertyName" required /></label>
+          <label>
+            Property type
+            <select ref={typeRef} name="propertyType" required defaultValue="">
+              <option value="" disabled>Choose a type</option>
+              {SECTORS.map((sector) => <option key={sector.slug} value={sector.slug}>{sector.name}</option>)}
+            </select>
+          </label>
+          <label>City<input name="propertyCity" autoComplete="address-level2" required /></label>
+          <label className="full-field">
+            Approximate lot size
+            <select name="lotSize" required defaultValue="">
+              <option value="" disabled>Choose a size</option>
+              <option value="large">Walmart-size or larger</option>
+              <option value="smaller">Smaller than a Walmart lot</option>
+              <option value="unsure">Not sure</option>
+            </select>
+          </label>
+        </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>The property</legend>
-        <label>Business or property name<input name="propertyName" required /></label>
-        <label>
-          Property type
-          <select ref={typeRef} name="propertyType" required defaultValue="">
-            <option value="" disabled>Choose a type</option>
-            {SECTORS.map((sector) => (
-              <option key={sector.slug} value={sector.slug}>{sector.name}</option>
-            ))}
-          </select>
+      <div className="customer-step-panel" data-form-step="2" hidden={step !== 2}>
+        <div className="customer-step-heading">
+          <p>Step 3 of 3</p>
+          <h3>Who should Reliable contact?</h3>
+          <span>Add the best contact at the property and any context that would help.</span>
+        </div>
+        <fieldset>
+          <legend>Property contact</legend>
+          <label>Contact name<input name="contactName" required /></label>
+          <label>Phone or email<input name="contactInfo" required /></label>
+          <label className="full-field">Anything else we should know?<textarea name="notes" rows={4} placeholder="Optional details about the property or introduction" /></label>
+        </fieldset>
+        <label className="consent customer-step-consent">
+          <input type="checkbox" name="consent" required />
+          <span>I have permission to share this contact&apos;s information with Reliable.</span>
         </label>
-        <label>City<input name="propertyCity" autoComplete="address-level2" required /></label>
-        <label>
-          Lot size
-          <select name="lotSize" defaultValue="">
-            <option value="" disabled>Choose a size</option>
-            <option value="large">Walmart-size or larger</option>
-            <option value="smaller">Smaller than a Walmart lot</option>
-            <option value="unsure">Not sure</option>
-          </select>
-        </label>
-        <label>Property contact name<input name="contactName" /></label>
-        <label>Contact phone or email<input name="contactInfo" /></label>
-        <label className="full-field">Anything else we should know?<textarea name="notes" rows={4} /></label>
-      </fieldset>
+      </div>
 
-      <label className="consent">
-        <input type="checkbox" name="consent" required />
-        <span>I have permission to share this contact&apos;s information with Reliable.</span>
-      </label>
-      <button type="submit" className="submit-button">Send referral <ArrowRight aria-hidden="true" /></button>
-      <p className="form-note">Forms are in preview. Submitting shows what happens next.</p>
+      <div className="customer-step-actions">
+        {step > 0 ? (
+          <button className="customer-step-back" type="button" onClick={() => setStep((current) => current - 1)}><ArrowLeft aria-hidden="true" />Back</button>
+        ) : <span />}
+        <p>{step + 1} of {STEPS.length}</p>
+        {step < STEPS.length - 1 ? (
+          <button className="customer-step-next" type="button" onClick={continueToNextStep}>Continue<ArrowRight aria-hidden="true" /></button>
+        ) : (
+          <button className="customer-step-next" type="submit">Send referral<ArrowRight aria-hidden="true" /></button>
+        )}
+      </div>
+      <p className="form-note">This form is currently in preview.</p>
     </form>
   );
 }

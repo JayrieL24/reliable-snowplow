@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, Phone } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PerspectiveCarousel } from "@/components/ui/perspective-carousel";
-import { RELIABLE_PHONE, SECTORS, article } from "@/lib/referral-content";
+import { SECTORS, article } from "@/lib/referral-content";
 
 const INTERVAL_MS = 6000;
 const COUNT = SECTORS.length;
@@ -200,10 +200,10 @@ export function SectorCarousel() {
             <li key={service}>{service}</li>
           ))}
         </ul>
-        <a className="scene-primary" href={RELIABLE_PHONE.href}>
-          <Phone aria-hidden="true" /> Refer {article(sector.cta)} {sector.cta}
+        <a className="scene-primary" href="#referral-form">
+          Refer {article(sector.cta)} {sector.cta} <ArrowRight aria-hidden="true" />
         </a>
-        <p className="cust-carousel-note">Call {RELIABLE_PHONE.label} and we take it from there.</p>
+        <p className="cust-carousel-note">Use the form below and Reliable takes it from there.</p>
       </div>
     </div>
   );

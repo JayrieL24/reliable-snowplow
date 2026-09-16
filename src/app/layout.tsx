@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -10,6 +10,11 @@ const poppins = Poppins({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://snowplow-referrals.vercel.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -25,10 +30,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/opengraph-snowplow-referrals-v5.jpg",
+        url: "/images/opengraph-snowplow-referrals-commercial-v6.jpg",
         width: 1200,
         height: 630,
-        alt: "Snowplow Referrals — make the connection",
+        alt: "Refer customers. Refer workers. Get rewarded. Commercial snow removal by Reliable.",
       },
     ],
   },
@@ -36,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Snowplow Referrals | Make the Connection",
     description: "Refer customers. Refer workers. Help build a better winter.",
-    images: ["/images/opengraph-snowplow-referrals-v5.jpg"],
+    images: ["/images/opengraph-snowplow-referrals-commercial-v6.jpg"],
   },
 };
 
