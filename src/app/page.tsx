@@ -204,6 +204,8 @@ export default function HomePage() {
             <span className="guide-file-icon"><FileText aria-hidden="true" /></span>
             <div><small>Worker program guide</small><strong>Overview, rules &amp; rates</strong><p>PDF · Available at launch</p></div>
             <button type="button" disabled><Download aria-hidden="true" /> Download PDF</button>
+            {/* Leads to the worker guide page; the navbar's Worker guide link stays as it is. */}
+            <a className="section-cta guide-card-link" href="/worker-guide">Explore the guide <ArrowRight aria-hidden="true" /></a>
           </div>
         </div>
         <div className="guide-scene-mobile" aria-hidden="true" />
