@@ -84,3 +84,25 @@ or call ${SFU_PHONE.label}. Mention my name when you reach out.`,
 };
 
 export const SHARE_TEXT = `Reliable Snow Plowing is hiring snow fighters near you. Next day pay for all positions and work close to home. See jobs: ${WINTER_WORKERS_WANTED} (mention my name!)`;
+
+/* A post for Facebook or other social feeds. DRAFT, copy for client review. */
+export const SHARE_SOCIAL = `Reliable Snow Plowing is hiring snow fighters across Ohio this winter. Next day pay for all positions, work within 15 minutes of home, and jobs for first-timers and experienced operators. See the openings: ${WINTER_WORKERS_WANTED}`;
+
+/* Every role as a photo card in Job openings. The first six show up front, a mix of
+   no-experience and experienced work; the rest open with "See all". Tag and line are drawn
+   from each position's perks. */
+export const JOB_CARDS: { slug: string; tag: string; line: string }[] = [
+  { slug: "sidewalk-shoveler", tag: "No experience needed", line: "Individuals or teams" },
+  { slug: "wheel-loader-operator", tag: "Experienced operators", line: "Enclosed with heat, new low-hour machines" },
+  { slug: "salt-truck-driver", tag: "CDL not always needed", line: "3 & 5 ton trucks, GPS-equipped fleet" },
+  { slug: "skid-steer-operator", tag: "Enclosed with heat", line: "New low-hour machines, two-way radio" },
+  { slug: "foreman", tag: "Leadership role", line: "Leadership workshops provided" },
+  { slug: "mechanic", tag: "First & second shift", line: "Heated bays with lifts, parts stocked" },
+  { slug: "plow-subcontractor", tag: "Bring your equipment", line: "Pick-ups, dump trucks, loaders and skid steers" },
+  { slug: "compact-loader-operator", tag: "Enclosed with heat", line: "New low-hour machines, two-way radio" },
+  { slug: "sidewalk-foreman", tag: "Experience needed", line: "Coordinate sidewalk teams" },
+  { slug: "utility-player", tag: "Flexible or set hours", line: "Salt trucks, wheel loaders, light mechanical work" },
+  { slug: "dispatcher", tag: "Can work from home", line: "Team environment, two-way radio" },
+];
+export const JOB_CARDS_SHOWN = 6;
+
