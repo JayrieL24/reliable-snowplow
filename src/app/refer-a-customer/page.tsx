@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import * as motion from "motion/react-client";
-import { ArrowRight, Award, Building2, CheckCircle2, Clock3, Handshake, HardHat, MapPin, PhoneCall, Route, ShieldCheck, Timer, Truck } from "lucide-react";
+import { ArrowRight, Award, Building2, CheckCircle2, Clock3, Handshake, HardHat, MapPin, Route, ShieldCheck, Timer, Truck } from "lucide-react";
 import { ComingSoonModal } from "@/components/ui/coming-soon";
 import { CustomerReferralForm } from "@/components/ui/customer-referral-form";
 import { FaqSection } from "@/components/ui/faq-section";
@@ -10,7 +10,7 @@ import { SectorCarousel } from "@/components/ui/sector-carousel";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { UsServiceMap } from "@/components/ui/us-service-map";
 import { VideoLightbox } from "@/components/ui/video-lightbox";
-import { CUSTOMER_FAQS, RELIABLE_PHONE, SERVICE_AREA } from "@/lib/referral-content";
+import { CUSTOMER_FAQS, SERVICE_AREA } from "@/lib/referral-content";
 
 export const metadata: Metadata = {
   title: "Refer a Customer | Snowplow Referrals",
@@ -94,29 +94,35 @@ export default function ReferACustomerPage() {
           <SectorCarousel />
         </motion.section>
 
-        {/* Video of me explaining the program, with the same ground covered in writing beside it. */}
-        {/* Same frame as the home page's introductory video: copy on the left, the video
-            running off the right edge of the page. */}
-        <motion.section className="intro-video" id="program-video" aria-labelledby="cust-video-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="intro-video-copy">
+        {/* Video of me explaining the program. Copy and two actions on the left; the thumbnail on the
+            right with its caption and the referral numbers underneath. */}
+        <motion.section className="cvid" id="program-video" aria-labelledby="cust-video-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="cvid-copy">
             <p className="clean-kicker">Program video</p>
             <h2 id="cust-video-title">Hear how the referral program <em>works.</em></h2>
-            <p>A walkthrough of the program, the customers Reliable is looking for and what happens once you make an introduction.</p>
-            <div className="intro-video-points">
-              <span><CheckCircle2 aria-hidden="true" /> 5% per entity, up to $3,000</span>
-              <span><CheckCircle2 aria-hidden="true" /> Walmart-size lots and portfolios</span>
-              <span><CheckCircle2 aria-hidden="true" /> Contact within one business day</span>
+            <p className="cvid-lede">A walkthrough of the program, the customers Reliable is looking for and what happens once you make an introduction.</p>
+            <div className="cvid-actions">
+              <a className="cvid-outline" href="#property-types">See who to refer <ArrowRight aria-hidden="true" /></a>
+              <a className="section-cta cvid-solid" href="#referral-form">Refer a Customer <ArrowRight aria-hidden="true" /></a>
             </div>
           </div>
-          {/* TODO: swap for the client's customer-program walkthrough once it's recorded.
-              This is Reliable's Next Day Pay / SnowFightersWanted.com spot, standing in. */}
-          <VideoLightbox
-            youtubeId="EUdzfTqLTu0"
-            title="Reliable Snow Plowing — Next Day Pay"
-            thumbnail="/images/customer-program-video-thumb.webp"
-            caption="Watch: Reliable Snow Plowing"
-            note="Customer program walkthrough coming soon"
-          />
+
+          <div className="cvid-media">
+            {/* TODO: swap for the client's customer-program walkthrough once it's recorded.
+                This is Reliable's Next Day Pay video (the same one on the home page), standing in. */}
+            <VideoLightbox
+              youtubeId="oWfCgCu-XPY"
+              title="Next day pay at Reliable"
+              thumbnail="/images/next-day-pay-video-thumb.jpg"
+              caption="Watch: Next day pay"
+              note="Customer program walkthrough coming soon"
+            />
+            <dl className="cvid-stats">
+              <div><dt>5%</dt><dd>Referral fee per entity</dd></div>
+              <div><dt>$3,000</dt><dd>Max per commercial referral</dd></div>
+              <div><dt>1 day</dt><dd>Business-day follow-up</dd></div>
+            </dl>
+          </div>
         </motion.section>
 
         {/* Selling proposition for customers, then fee structure and service limitations. */}
@@ -204,7 +210,7 @@ export default function ReferACustomerPage() {
 
             <div className="cust-map-copy">
               <p className="clean-kicker">Map of service area</p>
-              <h2 id="cust-map-title">All of Ohio, from <em>50 satellite locations.</em></h2>
+              <h2 id="cust-map-title"><span className="cust-map-line">All of Ohio, from</span> <em className="cust-map-line">50 satellite locations.</em></h2>
               <p className="cust-map-lede">Reliable works one state, thoroughly. Crews are never more than 15 minutes from the properties they protect.</p>
 
               <h3>Metro areas</h3>
@@ -232,22 +238,32 @@ export default function ReferACustomerPage() {
           intro="Straight answers about who Reliable serves, where, and what happens after you make an introduction."
         />
 
-        {/* Click to call Reliable, per the client's outline. Sits after the FAQ so the
-            phone is the last thing offered before the footer. */}
-        <section className="cust-call" aria-labelledby="cust-call-title">
-          <div>
-            <p className="cust-call-kicker">Click to call</p>
-            <h2 id="cust-call-title">Rather talk it through?</h2>
-          </div>
-          <div className="cust-call-actions">
-            <a className="cust-call-number" href={RELIABLE_PHONE.href} aria-label={`Call Reliable Snow Plowing at ${RELIABLE_PHONE.label}`}>
-              <PhoneCall aria-hidden="true" /> {RELIABLE_PHONE.label}
-            </a>
-            <a className="section-cta section-cta-dark" href="#referral-form">Start a referral <ArrowRight aria-hidden="true" /></a>
-          </div>
-        </section>
+        {/* The CTA and the footer share one tree background, laid on this wrapper rather than on
+            each section, so the forest runs unbroken from one into the other. */}
+        <div className="cta-footer-band">
+          {/* Closing CTA: type only, no imagery, running straight into the footer. The button goes to the
+              referral form under the hero. */}
+          <motion.section className="cust-cta" id="make-a-referral" aria-labelledby="cust-cta-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+            {/* Copy on the left, actions on the right, the pair centred as one block. */}
+            <div className="cust-cta-inner">
+              <div className="cust-cta-copy">
+                <p className="clean-kicker">Ready to refer?</p>
+                <h2 id="cust-cta-title">Know a commercial <em>property?</em></h2>
+                <p>Make the introduction in three short steps and Reliable takes it from there.</p>
+              </div>
+              <div className="cust-cta-actions">
+                <a className="section-cta cust-cta-button" href="#referral-form">
+                  Refer a Customer <ArrowRight aria-hidden="true" />
+                </a>
+                <a className="scene-secondary cust-cta-secondary" href="#property-types">
+                  See who to refer <ArrowRight aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          </motion.section>
 
-        <SiteFooter />
+          <SiteFooter />
+        </div>
         <ComingSoonModal />
       </main>
     </>

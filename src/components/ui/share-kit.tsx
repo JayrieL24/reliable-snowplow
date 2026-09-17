@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy, Mail, MessageSquare } from "lucide-react";
-import { SHARE_EMAIL, SHARE_TEXT } from "@/lib/worker-content";
+import { useState, type ReactNode } from "react";
+import { Check, Copy, Mail, MessageSquare, Share2 } from "lucide-react";
+import { SHARE_EMAIL, SHARE_SOCIAL, SHARE_TEXT } from "@/lib/worker-content";
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label }: { text: string; label: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
       type="button"
-      className="share-copy"
+      className="section-cta share-copy"
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(text);
@@ -20,44 +20,90 @@ function CopyButton({ text }: { text: string }) {
         }
       }}
     >
+      <span aria-live="polite">{copied ? "Copied" : label}</span>
       {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
-      <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
     </button>
   );
 }
 
-/* Ready-to-send email and text for referrers to promote the program to friends. The email
-   also opens straight in the visitor's mail app; the text in their messages app on phones. */
-export function ShareKit() {
-  const emailFull = `Subject: ${SHARE_EMAIL.subject}\n\n${SHARE_EMAIL.body}`;
-  const mailto = `mailto:?subject=${encodeURIComponent(SHARE_EMAIL.subject)}&body=${encodeURIComponent(SHARE_EMAIL.body)}`;
-  const sms = `sms:?&body=${encodeURIComponent(SHARE_TEXT)}`;
+const CHANNELS = [
+  {
+    key: "text", icon: MessageSquare, label: "Text message", hint: "Short and easy to forward",
+    copy: SHARE_TEXT,
+    copyLabel: "Copy Message",
+  },
+  {
+    key: "email", icon: Mail, label: "Email", hint: "A fuller note for friends",
+    copy: `Subject: ${SHARE_EMAIL.subject}\n\n${SHARE_EMAIL.body}`,
+    copyLabel: "Copy Template",
+  },
+  {
+    key: "social", icon: Share2, label: "Social post", hint: "For Facebook and group pages",
+    copy: SHARE_SOCIAL,
+    copyLabel: "Copy Caption",
+  },
+] as const;
+
+/* Ready-to-send messages for referrers, as a tabbed composer: the intro and channel tabs on the
+   left, one large preview of the chosen message on the right with a copy button. */
+export function ShareKit({ children }: { children: ReactNode }) {
+  const [active, setActive] = useState<(typeof CHANNELS)[number]["key"]>("text");
+  const channel = CHANNELS.find((c) => c.key === active)!;
+
+  const preview: Record<typeof active, ReactNode> = {
+    text: (
+      <div className="share-phone">
+        <p className="share-phone-to">To: a friend</p>
+        <p className="share-bubble">{SHARE_TEXT}</p>
+      </div>
+    ),
+    email: (
+      <div className="share-mail">
+        <p className="share-mail-subject"><span>Subject</span>{SHARE_EMAIL.subject}</p>
+        <pre className="share-body">{SHARE_EMAIL.body}</pre>
+      </div>
+    ),
+    social: (
+      <div className="share-social">
+        <p className="share-social-head"><span className="share-social-avatar" aria-hidden="true">You</span><strong>Your post</strong></p>
+        <p className="share-post">{SHARE_SOCIAL}</p>
+      </div>
+    ),
+  };
 
   return (
-    <div className="share-grid">
-      <article className="share-card">
-        <div className="share-card-head">
-          <span className="share-icon"><Mail aria-hidden="true" /></span>
-          <div><p>Email to friends</p><strong>{SHARE_EMAIL.subject}</strong></div>
+    <div className="share-layout">
+      <div className="share-intro program-copy-block">
+        {children}
+        <div className="share-tabs" role="tablist" aria-label="Message type">
+          {CHANNELS.map(({ key, icon: Icon, label, hint }) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              id={`share-tab-${key}`}
+              aria-selected={active === key}
+              aria-controls="share-panel"
+              className={active === key ? "is-active" : undefined}
+              onClick={() => setActive(key)}
+            >
+              <Icon aria-hidden="true" />
+              <span><strong>{label}</strong>{hint}</span>
+            </button>
+          ))}
         </div>
-        <pre className="share-body">{SHARE_EMAIL.body}</pre>
-        <div className="share-actions">
-          <CopyButton text={emailFull} />
-          <a className="share-open" href={mailto}>Open in email</a>
-        </div>
-      </article>
+      </div>
 
-      <article className="share-card share-card-text">
-        <div className="share-card-head">
-          <span className="share-icon"><MessageSquare aria-hidden="true" /></span>
-          <div><p>Text message</p><strong>Short and easy to forward</strong></div>
+      <div className="share-panel" id="share-panel" role="tabpanel" aria-labelledby={`share-tab-${channel.key}`}>
+        <div className="share-panel-head">
+          <span className="share-panel-icon" aria-hidden="true"><channel.icon /></span>
+          <span><small>{channel.label}</small><strong>{channel.hint}</strong></span>
         </div>
-        <p className="share-bubble">{SHARE_TEXT}</p>
+        <div className="share-preview">{preview[channel.key]}</div>
         <div className="share-actions">
-          <CopyButton text={SHARE_TEXT} />
-          <a className="share-open" href={sms}>Open in messages</a>
+          <CopyButton key={channel.key} text={channel.copy} label={channel.copyLabel} />
         </div>
-      </article>
+      </div>
     </div>
   );
 }

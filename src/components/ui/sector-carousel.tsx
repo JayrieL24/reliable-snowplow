@@ -42,11 +42,12 @@ function useSlideWidth(ref: React.RefObject<HTMLDivElement | null>) {
       if (!deckWidth) return;
 
       const stacked = deckWidth < 760;
-      const byWidth = deckWidth * (stacked ? 0.56 : 0.44);
+      // Peek layout: the active card takes most of the deck, neighbours are cut off at its edges.
+      const byWidth = deckWidth * (stacked ? 0.74 : 0.58);
       // Cards are 3:4, so a card allowed 34% of the screen's height is .75 of that wide.
       const byHeight = stacked ? window.innerHeight * 0.34 * 0.75 : Infinity;
 
-      setWidth(Math.round(Math.max(140, Math.min(byWidth, byHeight, 380))));
+      setWidth(Math.round(Math.max(160, Math.min(byWidth, byHeight, 460))));
     };
 
     const observer = new ResizeObserver(measure);
@@ -175,8 +176,8 @@ export function SectorCarousel() {
           activeIndex={slide}
           onActiveIndexChange={setSlide}
           slideWidth={slideWidth}
-          rotationStep={44}
-          inactiveScale={0.84}
+          rotationStep={0}
+          inactiveScale={1}
           showControls={false}
           transition={snap || reducedMotion ? { duration: 0 } : undefined}
           aria-label="Commercial property types"
