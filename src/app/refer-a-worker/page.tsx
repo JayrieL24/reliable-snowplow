@@ -47,8 +47,8 @@ const PAY_STEPS = [
 
 /* Square edits of the work photos keep the job grid's framing and lighting consistent. */
 const jobCards = JOB_CARDS.map(({ slug, tag, line }) => {
-  const { title } = POSITIONS.find((p) => p.slug === slug)!;
-  return { slug, title, image: `/images/work/jobs/${slug}.webp`, focus: "50% 50%", tag, line };
+  const { title, perks } = POSITIONS.find((p) => p.slug === slug)!;
+  return { slug, title, image: `/images/work/jobs/${slug}.webp`, focus: "50% 50%", tag, line, perks };
 });
 
 /* Referring Workers page, one section per item in the client's outline (see
@@ -71,7 +71,7 @@ export default function ReferAWorkerPage() {
             <p>Know someone ready for winter work? Earn $1.00 for every hour they work, indefinitely, while they get next day pay close to home.</p>
             <div className="scene-actions">
               <a className="scene-primary" href="#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
-              <a className="scene-secondary" href="#job-openings">See open positions <ArrowRight aria-hidden="true" /></a>
+              <a className="scene-secondary" href="#job-openings"><span className="wk-cta-full">See open positions</span><span className="wk-cta-short">Open positions</span> <ArrowRight aria-hidden="true" /></a>
             </div>
             <dl className="page-hero-stats">
               <div><dt>$1/hr</dt><dd>for every hour they work</dd></div>
