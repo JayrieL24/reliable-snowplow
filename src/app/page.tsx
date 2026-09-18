@@ -60,6 +60,9 @@ export default function HomePage() {
         </div>
         <Image className="truck-layer" src="/images/hero/reliable-plow.webp" alt="Commercial snowplow truck clearing snow" width={1536} height={1024} priority />
 
+        {/* Wrapper is display:contents on wide screens, so each card keeps floating over the scene
+            where it always has; below 1180px it becomes the row that holds the pair under the buttons. */}
+        <div className="scene-programs">
         <a className="scene-program scene-customer" href="/refer-a-customer#referral-form">
           <Users aria-hidden="true" />
           <span><small>Homeowners</small><strong>Refer a Customer</strong><em>Help a neighbor get reliable snow removal.</em></span>
@@ -70,6 +73,7 @@ export default function HomePage() {
           <span><small>Skilled professionals</small><strong>Refer a Worker</strong><em>Connect great people with winter work.</em></span>
           <ArrowRight aria-hidden="true" />
         </a>
+        </div>
 
         <div className="scene-trust" aria-label="Program benefits">
           <p><Users aria-hidden="true" /><span>Stronger<br />communities</span></p>
