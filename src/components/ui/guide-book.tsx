@@ -315,23 +315,26 @@ function buildScene(
     for (let i = 0; i < 1400; i++) x.fillRect(Math.random() * w, Math.random() * h, 1.4, 1.4);
     x.fillStyle = NAVY;
     x.textAlign = "left";
-    setFont(x, "800 92px");
-    x.fillText("Contents", 120, 230);
+    setFont(x, "800 104px");
+    x.fillText("Contents", 120, 238);
     x.fillStyle = ORANGE;
     x.fillRect(120, 268, 150, 8);
     chapters.forEach((title, i) => {
-      const y = 420 + i * 132;
+      const y = 430 + i * 148;
       x.fillStyle = ORANGE;
-      setFont(x, "800 44px");
+      setFont(x, "800 54px");
       x.fillText(String(i + 1).padStart(2, "0"), 120, y);
       x.fillStyle = NAVY;
-      setFont(x, "600 46px");
-      x.fillText(title, 220, y);
+      // Shrink any long chapter title until it fits the page rather than running off it.
+      let size = 62;
+      setFont(x, `650 ${size}px`);
+      while (size > 42 && x.measureText(title).width > w - 236 - 110) { size -= 2; setFont(x, `650 ${size}px`); }
+      x.fillText(title, 236, y);
       x.fillStyle = "rgba(11,36,71,.14)";
-      x.fillRect(120, y + 36, w - 240, 2);
+      x.fillRect(120, y + 44, w - 240, 2);
     });
     x.fillStyle = "rgba(11,36,71,.5)";
-    setFont(x, "600 34px");
+    setFont(x, "600 40px");
     x.fillText("Worker Referral Program Guide", 120, h - 110);
   });
 
@@ -411,9 +414,12 @@ function buildScene(
 
   /* ---------- sizing ---------- */
   let fit = 1;
+  // A phone-sized stage is too small to read the whole spread, so it frames the contents page.
+  let narrow = false;
   const resize = () => {
     const { width, height } = stage.getBoundingClientRect();
     if (!width || !height) return;
+    narrow = width < 420;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     // Narrow stages pull the camera back so the open spread still fits.
@@ -455,10 +461,12 @@ function buildScene(
     hinge.rotation.y = -swing * OPEN_ANGLE;
     // Closed: turned to show the spine, close to the camera. Open: square on, pulled back so the whole spread fits.
     book.rotation.y = 0.42 * (1 - swing) + 0.06 * swing + state.tiltY;
-    camera.position.z = (5.6 + swing * 1.6) * fit;
+    camera.position.z = (5.6 + swing * (narrow ? 0.15 : 1.6)) * fit;
+    // Narrow: pan across to the open page as it settles, rather than pulling back off both.
+    camera.position.x = narrow ? swing * W * 0.46 : 0;
     book.rotation.x = 0.05 + state.tiltX;
     book.rotation.z = reduce ? 0 : Math.sin(t * 0.7) * 0.012 * (1 - swing);
-    book.position.x = swing * (W * 0.5);
+    book.position.x = narrow ? 0 : swing * (W * 0.5);
     book.position.y = reduce ? 0 : Math.sin(t * 0.9) * 0.05;
     shadow.position.x = book.position.x;
     shadow.scale.x = 2.4 + swing * 0.2;
