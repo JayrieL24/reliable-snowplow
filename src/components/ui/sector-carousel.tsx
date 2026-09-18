@@ -83,6 +83,8 @@ export function SectorCarousel() {
   const deck = React.useRef<HTMLDivElement>(null);
   const swipeStart = React.useRef<{ x: number; y: number } | null>(null);
   const swiped = React.useRef(false);
+  // Which way the last change went, so the phone card can slide in from that side.
+  const [dir, setDir] = React.useState(1);
   const slideWidth = useSlideWidth(deck);
   const index = wrap(slide);
 
@@ -133,6 +135,7 @@ export function SectorCarousel() {
     let delta = target - index;
     if (delta > COUNT / 2) delta -= COUNT;
     if (delta < -COUNT / 2) delta += COUNT;
+    if (delta) setDir(delta > 0 ? 1 : -1);
     setSlide((s) => s + delta);
   };
 
@@ -140,6 +143,7 @@ export function SectorCarousel() {
 
   const move = (direction: number) => {
     setPaused(true);
+    setDir(direction > 0 ? 1 : -1);
     setSlide((current) => current + direction);
   };
 
@@ -221,7 +225,9 @@ export function SectorCarousel() {
       </div>
 
       <article
+        key={index}
         className="cust-carousel-mobile"
+        data-dir={dir}
         aria-live="polite"
         onPointerDown={(event) => {
           swipeStart.current = { x: event.clientX, y: event.clientY };
