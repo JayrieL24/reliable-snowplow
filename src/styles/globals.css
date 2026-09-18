@@ -59,7 +59,7 @@ main { overflow: clip; }
 .window-glow { position: absolute; z-index: 3; display: block; border-radius: 35%; background: rgba(255,157,44,.54); opacity: 0; filter: blur(20px); mix-blend-mode: screen; pointer-events: none; transition: opacity .65s ease; }
 /* Distribution centre uses its native alpha edge and the inherited scene lighting. */
 /* Account for the cutout's transparent lower margin so its snow meets the truck's baseline. */
-.house-layer.office-layer { left: -16%; bottom: calc(23.5% - min(11.52vw, 216px)); width: min(64vw, 1200px); }
+.house-layer.office-layer { left: -21%; bottom: calc(18.5% - min(11.52vw, 216px)); width: min(64vw, 1200px); }
 .office-layer .window-one { left: 52%; top: 54%; width: 11%; height: 10%; }
 .office-layer .window-two { left: 69%; top: 56%; width: 9%; height: 9%; }
 
@@ -175,6 +175,8 @@ main { overflow: clip; }
 .scene-program strong { font-size: 15px; }
 .scene-program span em { max-width: 190px; color: #b8c6d9; font-size: 12px; font-style: normal; line-height: 1.35; }
 /* Level with the worker card, above the Ohio map rather than on top of it. */
+/* Each card floats over the scene on its own here, so the wrapper stays out of the way. */
+.scene-programs { display: contents; }
 .scene-customer { left: 4.2%; bottom: 31.5%; }
 .scene-worker { right: 3%; top: 26.5%; bottom: auto; }
 
@@ -336,7 +338,13 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .scene-header nav { display: none; }
   .scene-guide-action { display: none; }
   .scene-copy { width: min(700px, calc(100% - 64px)); margin-top: 56px; }
-  .scene-program { display: none; }
+  /* No room to float them over a scene this size, so the pair sits in a row just above it - each
+     one still on its own side, the customer card over the building, the worker card over the truck.
+     They never stack: side by side is what ties each card to the thing under it. */
+  .scene-programs { position: relative; z-index: 6; display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 14px; width: calc(100% - 44px); margin: 26px auto 0; }
+  .scene-program { position: static; flex: 1 1 0; max-width: 340px; min-width: 0; min-height: 0; padding: 14px; text-align: left; }
+  .scene-program span { min-width: 0; }
+  .scene-program span em { max-width: none; }
   .scene-trust, .scene-side-note, .scene-signoff { display: none; }
   .house-layer { left: -29%; bottom: -4%; width: min(90vw, 920px); }
   .house-layer.office-layer { left: -7%; bottom: -10.5%; width: min(87vw, 780px); }
@@ -358,6 +366,10 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 
 @media (max-width: 700px) {
   .scene-hero { height: 820px; min-height: 820px; }
+  .scene-program { padding: 12px 13px; }
+  .scene-program small { font-size: 8.5px; }
+  .scene-program strong { font-size: 14px; }
+  .scene-program span em { font-size: 11px; }
   .scene-header { width: calc(100% - 32px); min-height: 74px; }
   .scene-brand span { display: none; }
   .scene-brand strong { font-size: 13px; }
@@ -407,8 +419,28 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .clean-footer p { flex-direction: column; gap: 4px; }
 }
 
+/* Tablets: the pair is drawn for a wide frame, so at this width the plow ran straight across the
+   dock bays and the cab fell off the right edge. Each is sized from its subject (the two files
+   carry very different transparent padding) so they stand the same height, and each hides about
+   the same share of itself off its own edge, with snow left between them. */
+@media (min-width: 561px) and (max-width: 1180px) {
+  /* Taller, to seat the two program cards between the buttons and the snow. */
+  .scene-hero { height: 900px; min-height: 900px; }
+  .house-layer.office-layer { left: calc(21.8% - 366px); bottom: calc(-52px - 6.01vw); width: calc(32.31vw + 374px); }
+  .truck-layer { right: calc(29.43% - 381px); bottom: calc(-11px - 1.24vw); width: calc(15.67vw + 393px); }
+}
+
 @media (max-width: 560px) {
-  .scene-hero { height: 790px; min-height: 790px; }
+  .scene-hero { height: 100vh; height: 100svh; min-height: 100svh; }
+  /* The same two cards, one on each side, scaled to the phone - nothing dropped. */
+  .scene-programs { gap: 9px; width: calc(100% - 32px); margin-top: 18px; }
+  .scene-program { grid-template-columns: 20px minmax(0, 1fr) 12px; gap: 7px; padding: 10px; }
+  .scene-program > svg:first-child { width: 17px; }
+  .scene-program > svg:last-child { width: 12px; }
+  .scene-program span { gap: 3px; }
+  .scene-program small { font-size: 7px; letter-spacing: .1em; }
+  .scene-program strong { font-size: 11.5px; letter-spacing: -.02em; }
+  .scene-program span em { font-size: 9.5px; line-height: 1.3; }
   .scene-header { grid-template-columns: 1fr; }
   .scene-header-actions { display: none; }
   .scene-brand strong { font-size: 12px; }
@@ -416,9 +448,14 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .scene-copy h1 { font-size: clamp(32px, 9.6vw, 39px); letter-spacing: -.06em; }
   .scene-copy > p:not(.scene-kicker) br { display: none; }
   .scene-actions { grid-template-columns: 1fr; width: min(100%, 330px); margin-inline: auto; }
+  /* Phone: both the building and the truck read larger and sit higher, matched in scale so
+     neither looks like a detail of the other. */
   .house-layer { left: -12%; bottom: 2%; width: 72vw; }
-  .house-layer.office-layer { left: -5%; bottom: 3%; width: 70vw; }
-  .truck-layer { right: -16%; bottom: 5%; width: 72vw; }
+  /* Both are scaled so their subjects stand the same height in the snow, and each hides the same
+     share of itself off its own edge, so the pair reads as one scene with a gap of snow between.
+     The widths look lopsided only because each file carries different transparent padding. */
+  .house-layer.office-layer { left: -75.6%; bottom: 4.3%; width: 129.5vw; }
+  .truck-layer { right: -63%; bottom: 10%; width: 110vw; max-width: none; }
   .jobs-layer { left: 3vw; width: 94vw; }
 }
 
@@ -578,7 +615,18 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 }
 
 @media (max-width: 560px) {
-  .why-section { padding: 70px 16px 44px; }
+  /* Phone: the scene is cropped tight here, so the trees come out dark and the pale cards cut a
+     band across them. A stronger wash keeps the trees as texture, as in the other light sections. */
+  .why-section { padding: 70px 16px 44px; background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.97) 0 22%, rgba(246,251,255,.9) 58%, rgba(236,245,254,.88) 100%), url("/images/hero/winter-scene-v2.webp") center 58% / cover; }
+  .benefit-card { box-shadow: none; backdrop-filter: none; border-color: rgba(101,139,184,.22); background: rgba(255,255,255,.94); }
+  /* Same on the dark Service limitations band: the big drop shadows read as a lighter strip
+     behind the row on a phone, so the cards sit flat on the scene instead. */
+  /* Same on the dark Service limitations band. Edge-to-edge pale cards read as one lighter strip
+     across the scene, so here the row keeps the section's side margins and the fill is softer. */
+  .cust-limits .benefit-marquee .benefit-card { box-shadow: none; backdrop-filter: none; border-color: rgba(199,220,245,.18); background: rgba(255,255,255,.06); }
+  .cust-limits .benefit-marquee { width: 100%; margin-left: 0; }
+  .cust-limits .benefit-grid { padding-inline: 0; }
+  .cust-limits .benefit-marquee .benefit-card { flex-basis: min(78vw, 320px); width: min(78vw, 320px); }
   .snowy-heading { margin-bottom: 34px; }
   .snowy-heading .clean-kicker { font-size: 10px; letter-spacing: .16em; }
   .snowy-heading h2 { font-size: 41px; line-height: 1; }
@@ -610,16 +658,41 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .worker-truck { right: -34%; bottom: 3%; width: 146%; }
   .visual-note { right: 4%; bottom: 4%; width: 84%; padding: 18px; }
   .worker-note { top: 4%; right: 4%; bottom: auto; }
-  .resource-section { display: block; min-height: 0; padding: 68px 16px 0; background: linear-gradient(180deg, rgba(244,250,255,.99) 0%, rgba(238,247,254,.96) 52%, rgba(232,243,252,.18) 74%), url("/images/worker-referral-guide-section-v1.webp") 72% bottom / auto 420px no-repeat; }
-  .resource-section::after { display: none; }
+  /* Phone: a plain wash on the section; the photo moves onto the scene block below, where its
+     own fade can follow it however tall the copy above happens to be. */
+  .resource-section { display: block; min-height: 0; padding: 68px 16px 0; background: linear-gradient(180deg, rgba(244,250,255,.99) 0%, rgba(238,247,254,.99) 52%, #fbfdff 100%); }
+  /* The photo ends on the next section's colour. */
+  .resource-section::after { height: 130px; background: linear-gradient(0deg, #fbfdff 0%, rgba(251,253,255,.8) 48%, rgba(251,253,255,0) 100%); }
   .resource-copy h2 { font-size: 49px; }
   .guide-features { display: grid; gap: 12px; }
-  .guide-card { grid-template-columns: 52px 1fr; gap: 15px; width: 100%; margin-top: 28px; padding: 22px 18px; }
-  .guide-scene-mobile { display: block; min-height: 430px; }
+  .guide-card { grid-template-columns: 52px 1fr; gap: 15px; width: 100%; margin-top: 28px; padding: 22px 18px; box-shadow: 0 10px 26px rgba(42,78,119,.08); }
+  /* Full bleed past the section padding. No fade over the photo: the block ramps to the photo's own
+     sky colour (sampled from its top rows) just before it starts, so the edge disappears and the
+     book keeps its full strength. */
+  /* The book sits about three quarters of the way across the photo, so a photo scaled to the block
+     runs out of picture on the right. Scaling it to 214% of the block and hanging it from the right
+     keeps the book centred AND the block covered, whatever the screen is. */
+  .guide-scene-mobile { display: block; width: calc(100% + 32px); height: auto; min-height: 0; aspect-ratio: 1 / 1.15; margin-inline: -16px; background: url(/images/worker-referral-guide-section-v1.webp) 99% bottom / 214% auto no-repeat, linear-gradient(180deg, rgba(244,250,255,0) 0, #dfebfb 12%); -webkit-mask-image: linear-gradient(180deg, transparent 1%, #000 14%); mask-image: linear-gradient(180deg, transparent 1%, #000 14%); }
   .guide-file-icon { width: 52px; height: 52px; }
   .guide-card strong { font-size: 18px; }
   .preview-modal-card { padding: 40px 23px 25px; }
   .preview-modal-card h2 { font-size: 39px; }
+}
+
+/* Tablets: the photo column collapses to a slither here, so the cover art blew up behind the copy
+   and swallowed it. Same answer as the phone — a plain wash on the section, with the book on its
+   own block below the card where its fade can follow it. */
+@media (min-width: 561px) and (max-width: 1400px) {
+  /* The photo column collapses to a slither at these widths, so the cover art used to blow up
+     behind the copy. Here the book is a real block beside the copy, dropping under it once the
+     two stop fitting side by side. */
+  .resource-section { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px 34px; min-height: 0; padding: clamp(78px, 6vw, 96px) max(32px, calc((100vw - 1300px) / 2)); background: linear-gradient(180deg, rgba(244,250,255,.99) 0%, rgba(238,247,254,.99) 52%, #fbfdff 100%); }
+  .resource-section::after { height: 130px; background: linear-gradient(0deg, #fbfdff 0%, rgba(251,253,255,.78) 48%, rgba(251,253,255,0) 100%); }
+  /* Side by side only once the copy can hold its heading on two lines and the book can still be
+     read at a decent size; under that the two stack, each taking the full column. */
+  .resource-copy { flex: 1 1 470px; max-width: 620px; }
+  .guide-card { width: 100%; }
+  .guide-scene-mobile { display: block; flex: 1.25 1 392px; max-width: 700px; height: auto; min-height: 0; aspect-ratio: 1 / 1.15; background: url(/images/worker-referral-guide-section-v1.webp) 99% bottom / 214% auto no-repeat, linear-gradient(180deg, rgba(244,250,255,0) 0, #dfebfb 12%); -webkit-mask-image: linear-gradient(180deg, transparent 1%, #000 14%, #000 96%, transparent 100%), linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(180deg, transparent 1%, #000 14%, #000 96%, transparent 100%), linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%); mask-composite: intersect; }
 }
 
 @keyframes benefit-marquee {
@@ -628,6 +701,7 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 }
 
 @media (max-width: 560px) and (prefers-reduced-motion: reduce) {
+  .cust-carousel-mobile { animation: none; }
   .benefit-marquee { overflow-x: auto; scrollbar-width: none; }
   .benefit-marquee::-webkit-scrollbar { display: none; }
   .benefit-grid { animation: none; }
@@ -1178,8 +1252,17 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 .referral-cta-light .scene-secondary:hover { border-color: #0b1d3c; background: white; }
 .referral-cta-light .scene-secondary:focus-visible { outline: 2px solid #3978c4; outline-offset: 3px; }
 
-@media (max-width: 900px) {
-  .referral-cta-inner { flex-direction: column; align-items: flex-start; }
+/* The three parts no longer fit on one line here. Stacking them outright left the right half of
+   the band empty, so instead the heading takes a row of its own and the rewards card and buttons
+   share the one below, dropping onto separate rows only when they genuinely stop fitting. */
+@media (max-width: 1420px) {
+  .referral-cta-inner { align-items: stretch; gap: 26px 32px; }
+  .referral-cta-light .referral-cta-copy, .referral-cta-copy { flex: 1 1 100%; max-width: none; }
+  .referral-cta-rewards { flex: 1 1 330px; align-items: center; }
+  /* Pushed full width, a single button became a long orange bar with its arrow stranded at the far
+     end. They pair up into columns when there is room and keep their label and arrow together. */
+  .referral-cta-actions { flex: 1 1 270px; grid-template-columns: repeat(auto-fit, minmax(186px, 1fr)); align-content: center; min-width: 0; }
+  .referral-cta-actions .scene-primary, .referral-cta-actions .scene-secondary { justify-content: center; gap: 10px; padding-inline: 20px; }
 }
 
 @media (max-width: 560px) {
@@ -1188,14 +1271,15 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .referral-cta-inner { gap: 20px; }
   .referral-cta-light .referral-cta-copy { flex: 0 1 auto; width: 100%; }
   .referral-cta-copy h2 { font-size: 34px; line-height: .98; }
-  .referral-cta-rewards { flex-direction: column; gap: 10px; }
+  /* The two rewards keep their desktop shape here - the figure over its line, side by side behind
+     their orange rules - and only drop to one column when the card is too narrow to hold both. */
+  .referral-cta-rewards { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 14px 22px; }
   .referral-cta-rewards span { max-width: none; }
   .referral-cta-light .referral-cta-rewards { width: 100%; padding: 17px 18px; border-radius: 16px; }
-  .referral-cta-light .referral-cta-rewards li { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 10px; align-items: center; padding-left: 12px; }
+  .referral-cta-light .referral-cta-rewards li { padding-left: 12px; }
   .referral-cta-light .referral-cta-rewards strong { font-size: 28px; }
   .referral-cta-light .referral-cta-rewards span { font-size: 13px; }
   .referral-cta-actions { display: grid; width: 100%; }
-  .referral-cta-actions .scene-primary, .referral-cta-actions .scene-secondary { justify-content: space-between; }
   .referral-cta-call { justify-content: center; }
 }
 /* Visual process steps: glass cards on the navy band with orange icon tiles, a faint
@@ -1367,14 +1451,14 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 /* Night-scene page hero: the home hero's background, shade, buttons and glass styling. */
 .page-hero { position: relative; isolation: isolate; display: grid; align-items: center; min-height: min(780px, 100svh); padding: 150px max(24px, calc((100vw - 1480px) / 2)) 90px; overflow: hidden; background: #071a31; color: white; }
 .page-hero-truck { position: absolute; z-index: -1; right: -8%; bottom: -2%; width: min(48vw, 800px); height: auto; filter: brightness(.72) saturate(.82) drop-shadow(-14px 24px 24px rgba(1,9,20,.4)); pointer-events: none; }
-.page-hero-copy { position: relative; z-index: 1; max-width: 760px; }
+.page-hero-copy { position: relative; z-index: 1; min-width: 0; max-width: 760px; }
 .page-hero-copy h1 { margin: 0; font-size: clamp(52px, 5.2vw, 86px); font-weight: 780; line-height: .94; letter-spacing: -.055em; text-shadow: 0 5px 28px rgba(2,11,24,.42); }
 .page-hero-copy h1 em { color: var(--orange); font-style: normal; }
 .page-hero-copy > p:not(.scene-kicker) { max-width: 600px; margin: 20px 0 0; color: #bdcadb; font-size: 18px; line-height: 1.55; }
 .page-hero .scene-actions { justify-content: flex-start; margin-top: 32px; }
 .page-hero .scene-secondary svg { width: 16px; }
 .page-hero-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 720px; margin: 44px 0 0; padding: 20px 8px; border: 1px solid rgba(199,220,245,.28); border-radius: 12px; background: linear-gradient(135deg, rgba(17,43,76,.72), rgba(37,57,91,.44)); backdrop-filter: blur(12px); }
-.page-hero-stats > div { padding: 0 18px; }
+.page-hero-stats > div { min-width: 0; padding: 0 18px; }
 .page-hero-stats > div:not(:last-child) { border-right: 1px solid rgba(255,255,255,.18); }
 .page-hero-stats dt { font-size: clamp(24px, 2.2vw, 32px); font-weight: 790; line-height: 1; letter-spacing: -.04em; }
 .page-hero-stats dd { margin: 6px 0 0; color: #98acc7; font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
@@ -1387,7 +1471,7 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   background: linear-gradient(90deg, rgba(251,253,255,.96) 0%, rgba(251,253,255,.87) 32%, rgba(251,253,255,.38) 56%, rgba(251,253,255,.04) 78%);
 }
 .page-hero-light::after { content: ""; position: absolute; z-index: 0; inset: auto 0 0; height: 180px; background: linear-gradient(180deg, rgba(251,253,255,0), var(--customer-snow, #fbfdff) 78%); pointer-events: none; }
-.customer-plow-layer { position: absolute; z-index: 0; right: -8%; bottom: 100px; width: min(48vw, 860px); transform-origin: right bottom; filter: saturate(.88) drop-shadow(-8px 14px 16px rgba(42,62,83,.12)); transition: transform .7s cubic-bezier(.2,.75,.2,1), filter .7s ease; }
+.customer-plow-layer { position: absolute; z-index: 2; right: -8%; bottom: 100px; width: min(48vw, 860px); transform-origin: right bottom; filter: saturate(.88) drop-shadow(-8px 14px 16px rgba(42,62,83,.12)); transition: transform .7s cubic-bezier(.2,.75,.2,1), filter .7s ease; }
 .customer-plow-layer img { display: block; width: 100%; height: auto; }
 .customer-plow-glow { position: absolute; opacity: 0; border-radius: 50%; background: rgba(255,177,61,.6); filter: blur(12px); mix-blend-mode: screen; pointer-events: none; transition: opacity .65s ease; }
 .customer-plow-beacon { left: 68%; top: 7%; width: 7%; height: 9%; }
@@ -1426,7 +1510,7 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 @media (max-width: 1180px) {
   /* Stack the loader below the copy before the two columns become crowded. */
   .page-hero-light .scene-shade { background: linear-gradient(180deg, rgba(251,253,255,.97) 0%, rgba(251,253,255,.89) 52%, rgba(251,253,255,.15) 82%); }
-  .page-hero.page-hero-light { padding-bottom: clamp(310px, 70vw, 520px); }
+  .page-hero.page-hero-light, .page-hero.page-hero-worker { padding-bottom: clamp(310px, 70vw, 520px); }
   .page-hero-light .scene-background { object-position: 72% 50%; }
   .customer-plow-layer { right: -8%; bottom: 42px; width: min(100vw, 680px); }
 }
@@ -1707,7 +1791,21 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
   .cust-head { grid-template-columns: 1fr; }
   .cust-cta { padding: 76px 28px 92px; }
   .cust-cta-inner { grid-template-columns: 1fr; gap: 30px; }
-  .cust-map-grid { grid-template-columns: 1fr; }
+  .cust-map-grid { display: flex; flex-direction: column; gap: 34px; }
+  .cust-map-copy { display: contents; }
+  .cust-map-copy > .clean-kicker, .cust-map-copy > h2, .cust-map-lede { order: 1; }
+  .cust-map-figure { order: 2; margin: 0; }
+  .cust-map-copy > h3, .cust-map-cities, .cust-map-counties { order: 3; }
+  .cust-map-copy > .clean-kicker { margin-bottom: 0; }
+  .cust-map-lede { margin-top: 0; }
+  .cust-map-copy > h3 { margin: 0; }
+  .cust-map-copy > h2, .cust-map-lede { align-self: stretch; }
+  /* Phones centre these against a narrow map; on a tablet the column is wide enough that a centred
+     kicker beside a left-aligned heading just reads as a mistake. */
+  @media (min-width: 561px) {
+    .cust-map-copy > .clean-kicker, .cust-map-copy > h3, .cust-map-figure, .cust-map-cities, .cust-map-counties { align-self: stretch; }
+    .cust-map-cities { justify-content: flex-start; }
+  }
   .cust-limits { padding: 82px 28px 64px; }
   /* No empty ocean left to sit over once the map is this small. */
   .cust-map-callout { position: static; margin-top: 18px; }
@@ -1726,13 +1824,57 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
   .page-hero .scene-actions { grid-template-columns: 1fr; width: 100%; }
   .page-hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 0; }
   .page-hero-stats > div:nth-child(2) { border-right: 0; }
+  /* Refer a Worker hero: the stats panel keeps to the left half so the truck reads beside it. */
+  /* Phone: the same composition as the Refer a Customer hero — buttons in a narrow column on the
+     left, the machine bleeding in from the right beside them, the figures in a row underneath. */
+  .page-hero.page-hero-light { min-height: 0; }
+  .page-hero.page-hero-worker { min-height: 100vh; min-height: 100svh; align-items: end; --hero-lift: 0px; }
+  .page-hero.page-hero-worker { padding-bottom: calc(42px + var(--hero-lift)); }
+  /* Four figures across is too tight on a phone: two by two, with room around each. */
+  .page-hero-worker .page-hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; width: 100%; margin-top: calc(28px + 10svh); padding: 20px 6px; }
+  .page-hero-worker .page-hero-stats > div { padding: 0 16px; }
+  .page-hero-worker .page-hero-stats > div:nth-child(2) { border-right: 0; }
+  .page-hero-worker .page-hero-stats > div:nth-child(odd) { border-right: 1px solid rgba(255,255,255,.18); }
+  .page-hero-worker .page-hero-stats dt { font-size: 27px; letter-spacing: -.045em; }
+  .page-hero-worker .page-hero-stats dd { margin-top: 7px; font-size: 9px; line-height: 1.4; letter-spacing: .06em; }
   .customer-hero-proof { grid-template-columns: 1fr; gap: 0; margin-top: 30px; padding-top: 0; }
   .customer-hero-proof li { display: grid; grid-template-columns: 1fr 1fr; align-items: baseline; gap: 14px; padding: 12px 0; border-right: 0 !important; border-bottom: 1px solid rgba(16,44,85,.12); }
   .customer-hero-proof strong { font-size: 20px; }
   .customer-hero-proof span { text-align: right; }
   .page-hero-truck { right: -16%; bottom: 1%; width: 74vw; opacity: .48; }
-  .page-hero.page-hero-light { padding-bottom: 250px; }
-  .customer-plow-layer { right: -7%; bottom: 28px; width: 76vw; }
+  /* Phone: the loader keeps its snow and the trust bar sits under it, not above. */
+  .page-hero.page-hero-light { padding-bottom: 42px; }
+  /* Buttons keep the left half; the loader bleeds in from the right edge, facing them. */
+  .page-hero-light .scene-actions, .page-hero-worker .scene-actions { display: grid; gap: 10px; width: 54%; margin-left: 0; margin-right: auto; }
+  .page-hero-light .scene-actions .scene-primary, .page-hero-light .scene-actions .scene-secondary, .page-hero-worker .scene-actions .scene-primary, .page-hero-worker .scene-actions .scene-secondary { width: 100%; padding-inline: 16px 7px; gap: 10px; justify-content: space-between; white-space: nowrap; }
+  /* The primary action leads: taller and a size up on the secondary. */
+  .page-hero-light .scene-actions .scene-primary, .page-hero-worker .scene-actions .scene-primary { min-height: 56px; font-size: 14.5px; }
+  .page-hero-light .scene-actions .scene-secondary, .page-hero-worker .scene-actions .scene-secondary { width: 94%; min-height: 48px; font-size: 12.5px; }
+  /* Phone hero only: give the pair some weight — a warm lift under the primary, a soft glass
+     panel for the secondary, and the arrow in a round chip on each. */
+  .page-hero-light .scene-actions .scene-primary, .page-hero-worker .scene-actions .scene-primary { box-shadow: 0 14px 28px rgba(239,125,50,.3); }
+  /* flex: none so the chip keeps its size instead of being squeezed out past the button edge. */
+  .page-hero-light .scene-actions .scene-primary svg, .page-hero-worker .scene-actions .scene-primary svg { flex: none; width: 42px; height: 42px; padding: 11px; border-radius: 50%; background: rgba(17,25,37,.16); }
+  .page-hero-light .scene-actions .scene-secondary { border: 1px solid rgba(16,44,85,.18); background: rgba(255,255,255,.9); box-shadow: 0 10px 22px rgba(42,62,83,.12); backdrop-filter: blur(8px); }
+  /* Dark hero: the same shape, but the night-glass the page already uses. */
+  .page-hero-worker .scene-actions .scene-secondary { border: 1px solid rgba(199,220,245,.34); background: rgba(12,32,58,.55); box-shadow: 0 10px 22px rgba(1,10,23,.28); backdrop-filter: blur(8px); color: white; }
+  .page-hero-light .scene-actions .scene-secondary svg { flex: none; width: 36px; height: 36px; padding: 9px; border-radius: 50%; background: #e9f2fc; color: #0d2d5a; }
+  .page-hero-worker .scene-actions .scene-secondary svg { flex: none; width: 36px; height: 36px; padding: 9px; border-radius: 50%; background: rgba(255,255,255,.16); color: white; }
+  /* Its labels are longer than the customer hero's, so the chips were being clipped at the button
+     edge: trimmed padding, gaps and chips, and the secondary takes the full column. Measured to
+     still fit at 320px. */
+  .page-hero-worker .scene-actions .scene-primary { padding-inline: 14px 7px; gap: 8px; }
+  .page-hero-worker .scene-actions .scene-primary svg { width: 32px; height: 32px; padding: 8px; }
+  .page-hero-worker .scene-actions .scene-secondary { width: 88%; padding-inline: 12px 6px; gap: 8px; font-size: 12px; }
+  .page-hero-worker .scene-actions .wk-cta-full { display: none; }
+  .page-hero-worker .scene-actions .wk-cta-short { display: inline; }
+  .page-hero-worker .scene-actions .scene-secondary svg { width: 28px; height: 28px; padding: 7px; }
+  .page-hero-light .customer-hero-proof { margin-top: 34px; }
+  /* Phones: fixed pixels, not viewport units. Everything below the loader is fixed too (42px of
+     padding, then the ~162px trust list, then 114px of buttons), so a pixel offset lands it in the
+     same place on every phone; 260px keeps it clear of the paragraph even on a 375px iPhone SE,
+     where it used to ride up over the text. */
+  .customer-plow-layer { right: -52px; bottom: 206px; width: clamp(260px, 62vw, 310px); }
   .cust-section, .cust-video { padding: 66px 16px; }
   .customer-form-page { min-height: 0; padding: 66px 16px; scroll-margin-top: 74px; }
   .customer-form-page-intro { text-align: left; }
@@ -1756,13 +1898,31 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
   .customer-step-actions > p { display: none; }
   .customer-step-actions button { width: 100%; padding-inline: 14px; }
   .cust-section h2, .cust-video h2 { font-size: 40px; }
-  .cust-values { grid-template-columns: 1fr; }
+  /* Phone: a bento instead of five identical stacked blocks — one wide feature card, then pairs. */
+  .cust-values { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .cust-values li { padding: 18px 16px; border-radius: 16px; }
+  .cust-values li:first-child { grid-column: 1 / -1; display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 14px; align-items: center; }
+  .cust-values li:first-child strong { margin-top: 0; }
+  .cust-values li:first-child span { grid-column: 2; }
+  .cust-values svg { width: 40px; height: 40px; padding: 10px; border-radius: 11px; }
+  .cust-values strong { margin-top: 13px; font-size: 15.5px; letter-spacing: -.025em; }
+  .cust-values span { margin-top: 4px; font-size: 13px; line-height: 1.45; }
+  /* The fee card keeps the lead, then Who qualifies, both full width. */
+  .cust-terms-grid { gap: 10px; }
+  .cust-term { padding: 24px 20px; border-radius: 18px; }
+  .cust-term-big { font-size: 68px; }
+  .cust-term h3 { font-size: 22px; }
   .cust-cta { padding: 62px 16px 80px; }
   .cust-cta-actions { min-width: 0; }
   .cust-gallery-section .cust-head { margin-bottom: 26px; }
   .cust-gallery-section .cust-head > p { font-size: 15px; line-height: 1.5; }
   .cust-carousel { display: block; }
   .cust-carousel-main, .cust-carousel-detail { display: none; }
+  /* Each swipe brings the next card in from the side it came from, so the change is legible. */
+  .cust-carousel-mobile { animation: cust-card-in .4s cubic-bezier(.2,.75,.2,1) both; }
+  .cust-carousel-mobile[data-dir="-1"] { animation-name: cust-card-in-back; }
+  @keyframes cust-card-in { from { opacity: 0; transform: translateX(34px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes cust-card-in-back { from { opacity: 0; transform: translateX(-34px) scale(.985); } to { opacity: 1; transform: none; } }
   .cust-carousel-mobile { display: block; overflow: hidden; border: 1px solid rgba(101,139,184,.2); border-radius: 21px; background: white; box-shadow: 0 18px 48px rgba(26,62,104,.14); touch-action: pan-y; }
   .cust-carousel-mobile-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #d9e8f6; }
   .cust-carousel-mobile-media::after { content: ""; position: absolute; inset: auto 0 0; height: 36%; background: linear-gradient(180deg, transparent, rgba(5,23,44,.34)); pointer-events: none; }
@@ -1778,6 +1938,12 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
   .cust-map-counties { grid-template-columns: 1fr; }
   .cust-limits { padding: 66px 16px 52px; }
   .cust-map-counties { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Phone order: heading, then the map, then the lists. The copy block dissolves into the
+     column so its heading can sit above the figure. */
+  .cust-map-grid { gap: 22px; }
+  /* Metro pills two by two. */
+  .cust-map-cities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .cust-map-cities li { justify-content: center; padding: 10px 12px; font-size: 13.5px; }
   .cust-call { padding: 56px 16px; }
   .cust-call-actions .section-cta { width: 100%; }
 }
@@ -1893,6 +2059,36 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .jobs-toggle { background: white; font-family: inherit; cursor: pointer; }
 .jobs-toggle svg { transition: transform .25s ease; }
 .jobs-toggle.is-open svg { transform: rotate(180deg); }
+
+/* A role opened from the compact phone cards. Sits in the site's existing .preview-modal scrim. */
+.job-modal-card { position: relative; display: flex; flex-direction: column; width: min(420px, 100%); max-height: 88svh; overflow-y: auto; border: 1px solid rgba(101,139,184,.28); border-radius: 22px; background: white; box-shadow: 0 40px 90px rgba(1,10,23,.45); }
+.job-modal-media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 21px 21px 0 0; background: #d8e9f8; }
+.job-modal-media img { object-fit: cover; }
+.job-modal-body { padding: 20px 22px 24px; }
+.job-modal-tag { display: inline-block; margin: 0; padding: 6px 12px; border-radius: 999px; background: #e9f2fc; color: #0d2d5a; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.job-modal-body h3 { margin: 12px 0 0; color: #0b1d3c; font-size: 26px; font-weight: 790; line-height: 1.12; letter-spacing: -.035em; }
+.job-modal-line { margin: 8px 0 0; color: #52647e; font-size: 15px; line-height: 1.5; }
+.job-modal-perks { display: grid; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.job-modal-perks li { display: flex; align-items: baseline; gap: 10px; color: #243955; font-size: 14px; line-height: 1.45; }
+.job-modal-perks li::before { content: ""; flex: 0 0 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+.job-modal-body .section-cta { justify-content: center; width: 100%; min-width: 0; margin-top: 20px; }
+
+/* Phones: the job cards become a thumbnail beside the role name, and open the modal above. */
+@media (max-width: 560px) {
+  .jobs-grid { gap: 10px; }
+  .job-card { flex-direction: row; align-items: center; gap: 13px; padding: 10px; border-radius: 16px; }
+  .job-card:hover { transform: none; }
+  .job-card-media { flex: 0 0 74px; width: 74px; border-radius: 11px; }
+  /* The tag reads better under the name here than floating on a 74px thumbnail. */
+  .job-card-tag { display: none; }
+  .job-card-body { flex: 1; min-width: 0; gap: 10px; padding: 0; }
+  .job-card-text { gap: 3px; font-size: 12.5px; }
+  .job-card-text strong { font-size: 18px; }
+  /* The whole card opens the role, so it needs no button of its own — just an affordance. */
+  .job-card-apply { display: none; }
+  .job-card-body::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: 4px; border-top: 2px solid #8aa3bf; border-right: 2px solid #8aa3bf; transform: rotate(45deg); }
+  .jobs-all { margin-top: 24px; }
+}
 /* Apply placeholder page (app/apply): the chosen role's perks as chips in the hero. */
 .apply-perks { display: flex; flex-wrap: wrap; gap: 8px; max-width: 600px; margin: 24px 0 0; padding: 0; list-style: none; }
 .apply-perks li { padding: 7px 13px; border: 1px solid rgba(255,255,255,.24); border-radius: 999px; background: rgba(255,255,255,.08); color: #eaf2fb; font-size: 13px; font-weight: 700; }
@@ -2049,14 +2245,35 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .wvid { padding-inline: 24px; }
   .wvid-head h2 { font-size: 40px; }
   .wvid-media .intro-video-caption { flex-direction: column; gap: 3px; }
-  .wvid-points a { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: start; padding: 16px; }
-  .wvid-icon { width: 40px; height: 40px; border-radius: 12px; }
-  .wvid-icon svg { width: 19px; }
-  .wvid-link-stat { grid-column: 2; flex-direction: row; align-items: baseline; gap: 6px; padding: 10px 0 0; border-top: 1px solid rgba(101,139,184,.22); border-left: 0; }
-  .wvid-link-stat strong { font-size: 22px; }
+  /* Phone: the video leads. The three links shrink to a row of small tiles beneath it — icon,
+     figure and label only — with the button under them. */
+  .wvid-rail { display: contents; }
+  .wvid-rail-label { display: none; }
+  .wvid-points { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 18px; }
+  .wvid-points a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 14px; text-align: center; }
+  .wvid-points a:hover { transform: none; }
+  .wvid-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .wvid-icon svg { width: 17px; }
+  .wvid-link-text { order: 2; align-items: center; gap: 0; }
+  .wvid-link-meta { order: 2; font-size: 11px; font-weight: 750; line-height: 1.25; letter-spacing: 0; }
+  .wvid-link-desc, .wvid-link-jump { display: none; }
+  .wvid-link-stat { order: 1; flex-direction: column; align-items: center; gap: 0; padding: 0; border-left: 0; }
+  .wvid-link-stat strong { font-size: 19px; }
+  .wvid-actions { margin-top: 14px; }
+  .wvid-actions > a { width: 100%; }
   .wrk-affiliate-grid, .jobs-grid { grid-template-columns: 1fr; }
-  .pay-bento { grid-template-columns: 1fr; gap: 12px; }
-  .pay-main, .pay-next { grid-column: auto; grid-row: auto; }
+  /* Phone keeps the bento: the big card and the link full width, the two facts side by side. */
+  .pay-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .pay-main, .pay-next { grid-column: 1 / -1; grid-row: auto; }
+  .pay-fact { padding: 18px 16px; }
+  .pay-fact > svg { width: 42px; height: 42px; padding: 12px; }
+  .pay-fact-figure { margin-top: 16px !important; font-size: 26px; }
+  .pay-fact-term .pay-fact-figure, .pay-fact .pay-fact-figure { white-space: normal; }
+  .pay-fact strong { margin-top: 12px; font-size: 15px; }
+  .pay-fact span { margin-bottom: 16px; font-size: 12.5px; line-height: 1.4; }
+  .pay-fact-ticks { gap: 9px; padding-top: 14px; }
+  .pay-fact-ticks li { gap: 6px; font-size: 11.5px; }
+  .pay-fact-ticks svg { flex-basis: 15px; width: 15px; }
   .pay-main, .pay-fact, .pay-next { border-radius: 18px; box-shadow: 0 12px 28px rgba(26,62,104,.07); }
   .share-panel { box-shadow: 0 12px 28px rgba(26,62,104,.08); }
   .pay-main { padding: 30px 22px; }
@@ -2252,6 +2469,13 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 }
 @media (max-width: 600px) {
   .cvid-copy h2 { font-size: 40px; }
+  /* Phone: heading, then the video, then the buttons. The copy block dissolves into the column so
+     the actions can follow the video. */
+  .cvid { display: flex; flex-direction: column; gap: 26px; }
+  .cvid-copy { display: contents; }
+  .cvid-copy > .clean-kicker, .cvid-copy > h2, .cvid-lede { order: 1; }
+  .cvid-media { order: 2; }
+  .cvid-actions { order: 3; margin-top: 0; }
   .cvid-actions > a { width: 100%; }
   .cvid-media .intro-video-caption { flex-direction: column; gap: 3px; }
   .cvid-stats { gap: 12px; }
@@ -2263,13 +2487,30 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 .page-hero-full { min-height: 100vh; min-height: 100svh; }
 /* Refer a Worker hero truck (full viewport hero): the home hero truck's placement and size at every breakpoint (.truck-layer). */
 .page-hero-worker .page-hero-truck { right: -12.5%; bottom: 16.5%; width: min(49vw, 830px); opacity: 1; }
-@media (max-width: 1180px) { .page-hero-worker .page-hero-truck { right: -22%; bottom: 1%; width: min(74vw, 760px); } }
+/* The hero's second button carries a shorter label on phones, where the column is narrow. */
+.wk-cta-short { display: none; }
+@media (max-width: 1180px) { .page-hero-worker .page-hero-truck { right: -8%; bottom: 42px; width: min(100vw, 680px); } }
 @media (max-width: 900px) { .page-hero-worker .page-hero-truck { opacity: 1; } }
-@media (max-width: 700px) { .page-hero-worker .page-hero-truck { right: -18%; bottom: 4%; width: 80vw; filter: brightness(.86) saturate(.9) drop-shadow(-14px 24px 24px rgba(1,9,20,.4)); } }
-@media (max-width: 560px) { .page-hero-worker .page-hero-truck { right: -16%; bottom: 5%; width: 72vw; opacity: 1; } }
+@media (max-width: 700px) { .page-hero-worker .page-hero-truck { filter: brightness(.86) saturate(.9) drop-shadow(-14px 24px 24px rgba(1,9,20,.4)); } }
+/* Phone: the truck is in the flow between the copy and the buttons, wider than the screen so it
+   runs off the right edge (see the hero block in the phone styles above). */
+/* Phones: same fixed placement as the customer hero's loader, sitting just above the stats bar. */
+/* Tall phones have spare height above the content; lift the whole composition into it. */
+/* Narrower than any real phone: keep it readable rather than let things collide. */
+@media (max-width: 340px) {
+  .page-hero-light .scene-actions .scene-primary, .page-hero-light .scene-actions .scene-secondary,
+  .page-hero-worker .scene-actions .scene-primary, .page-hero-worker .scene-actions .scene-secondary { padding-block: 10px; white-space: normal; line-height: 1.25; }
+  .page-hero-worker .page-hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 0; }
+  .page-hero-worker .page-hero-stats > div:nth-child(2) { border-right: 0; }
+  .page-hero-worker .page-hero-truck, .customer-plow-layer { right: -18%; width: min(78vw, 260px); }
+}
+@media (max-width: 560px) and (min-height: 740px) { .page-hero.page-hero-worker { --hero-lift: 11svh; } }
+/* The stats panel sits 10svh lower, which makes the hero taller; the truck is anchored to the
+   hero foot, so it gains the same amount back to stay put beside the buttons. */
+@media (max-width: 560px) { .page-hero-worker .page-hero-truck { right: -52px; bottom: calc(140px + 10svh + var(--hero-lift, 0px)); width: clamp(260px, 62vw, 310px); max-width: none; opacity: 1; } }
 /* The home hero's truck behaviour (.truck-layer): dim at rest, then it lights up and eases
    forward when a hero button or the truck itself is hovered, or tapped on touch screens. */
-.page-hero-full .page-hero-truck { z-index: 0; pointer-events: auto; transform: translate3d(0,0,0); transform-origin: right bottom; transition: filter .65s ease, transform .75s cubic-bezier(.2,.75,.2,1); }
+.page-hero-full .page-hero-truck { z-index: 2; pointer-events: auto; transform: translate3d(0,0,0); transform-origin: right bottom; transition: filter .65s ease, transform .75s cubic-bezier(.2,.75,.2,1); }
 @media (hover: hover) and (pointer: fine) {
   .page-hero-full:has(.scene-actions a:is(:hover, :focus-visible)) .page-hero-truck,
   .page-hero-full:has(.page-hero-truck:hover) .page-hero-truck { filter: brightness(.96) saturate(.98) drop-shadow(-14px 24px 26px rgba(1,9,20,.38)); transform: translate3d(-25px,-3px,0) rotate(-.15deg); }
@@ -2417,7 +2658,18 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 }
 @media (max-width: 560px) {
   .guide-contents { padding: 72px 16px; }
-  .guide-hero { padding-top: 110px; }
+  /* Phone: the heading and the book lead; the lede, buttons and terms follow underneath. */
+  .guide-hero { display: flex; flex-direction: column; gap: 0; min-height: 0; padding-top: 96px; padding-bottom: 48px; }
+  .guide-hero .guide-showcase-copy { display: contents; }
+  .guide-hero .page-crumbs, .guide-hero .guide-showcase-copy > .clean-kicker, .guide-hero .guide-showcase-copy h1 { order: 1; }
+  .guide-hero .guide-book { order: 2; width: calc(100% + 24px); margin: 16px -12px 4px; }
+  .guide-hero .guide-book-stage { max-width: none; }
+  .guide-hero .guide-showcase-copy > p:not(.clean-kicker), .guide-hero .scene-actions, .guide-hero-terms { order: 3; }
+  .guide-hero .guide-showcase-copy h1 { font-size: 37px; text-wrap: balance; }
+  .guide-hero .guide-showcase-copy > p:not(.clean-kicker) { margin-top: 18px; font-size: 16px; }
+  .guide-hero .scene-actions { display: grid; gap: 10px; margin-top: 20px; }
+  .guide-hero .scene-actions > a { width: 100%; }
+  .guide-hero-terms { margin-top: 22px; }
   .guide-hero-terms { grid-template-columns: 1fr; padding: 4px 20px; }
   .guide-hero-terms > div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 14px 0; }
   .guide-hero-terms > div:not(:last-child) { border-right: 0; border-bottom: 1px solid rgba(16,44,85,.12); }
@@ -2456,4 +2708,105 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .guide-help { width: calc(100% - 32px); }
   .guide-help-actions { width: 100%; }
   .guide-help-actions .sfu-call, .guide-help-actions .section-cta { width: 100%; }
+}
+
+/* Phones: in one column these referral forms run very long, so the short fields pair up again
+   and the spacing tightens. Scoped to .cust-form-shell and to this query: the desktop layout,
+   and every other form, are untouched. */
+@media (max-width: 700px) {
+  .cust-form-shell { padding: 22px 15px; }
+  .cust-form-shell .form-title { gap: 12px; padding-bottom: 17px; }
+  .cust-form-shell .form-title > span { width: 40px; height: 40px; }
+  .cust-form-shell .form-title svg { width: 18px; }
+  .cust-form-shell .form-title h3 { font-size: 21px; }
+  /* Back to two columns: phone/email, name/contact, relationship/location each share a row. */
+  .cust-form-shell fieldset { grid-template-columns: 1fr 1fr; gap: 13px 10px; margin-top: 22px; }
+  .cust-form-shell legend, .cust-form-shell .full-field { grid-column: 1 / -1; }
+  .cust-form-shell label { gap: 6px; font-size: 12.5px; line-height: 1.25; }
+  /* Shorter fields, but the text stays at 16px so iOS doesn't zoom the page on focus. */
+  .cust-form-shell input:not([type="checkbox"]):not([type="radio"]), .cust-form-shell select { min-height: 44px; padding: 0 11px; }
+  .cust-form-shell textarea { min-height: 84px; padding: 10px 11px; }
+  .cust-form-shell .choice-field { gap: 8px; }
+  .cust-form-shell .choice-group { gap: 6px; }
+  .cust-form-shell .choice-group label span { padding: 8px 13px; font-size: 12px; }
+  .cust-form-shell .optin-group { margin-top: 18px; padding: 14px 14px 2px; }
+  .cust-form-shell .optin-group .consent { margin-top: 10px; margin-bottom: 11px; }
+  .cust-form-shell .consent { margin-top: 16px; font-size: 12.5px; }
+  .cust-form-shell .submit-button { min-height: 52px; margin-top: 18px; }
+}
+
+/* Phones: the message preview comes first and the three message types sit under it as one
+   compact row. The switcher lives inside .share-intro, so that wrapper goes display: contents
+   here, letting its children and the panel be ordered together. It only carries position and
+   z-index, which nothing in this section needs. Desktop and tablet are untouched. */
+@media (max-width: 700px) {
+  .share-layout { display: flex; flex-direction: column; gap: 0; }
+  .share-intro { display: contents; }
+  .share-layout > .share-panel { order: 2; margin-top: 22px; }
+  .share-tabs { order: 3; display: flex; gap: 6px; width: 100%; margin-top: 14px; }
+  .share-tabs button { flex: 1 1 0; min-width: 0; grid-template-columns: 1fr; justify-items: center; gap: 7px; padding: 12px 3px; text-align: center; }
+  .share-tabs button svg { width: 36px; height: 36px; padding: 9px; }
+  /* Label only: the hint line would wrap three times in a third of the screen. It stays in the
+     markup for screen readers. */
+  .share-tabs button > span { font-size: 0; line-height: 0; }
+  .share-tabs strong { margin-bottom: 0; font-size: 12px; line-height: 1.2; white-space: nowrap; }
+}
+
+/* Phones: the team photo is 1800x1202 with the building's RELIABLE sign across the top, so at
+   phone width the crew ends up tiny under a wall of signage. A letterbox frame parked on the
+   bottom of the photo crops to the people and leaves the sign out of shot. The parallax drift
+   is off here so the crop can't slide back up to the sign. Desktop and tablet are untouched. */
+@media (max-width: 700px) {
+  .story-photo { aspect-ratio: 2 / 1; }
+  .story-photo-layer { inset: 0; transform: none; }
+  .story-photo-layer img { object-position: 50% 97%; }
+}
+
+/* Phones: this team photo is 1800x1202 and the building's RELIABLE sign runs across its top
+   third, so at phone width the sign dominates and the crew is a thin strip. Framing 4:3 and
+   zooming in on the group puts their faces in the clear, above the stats card, and pushes the
+   sign out of shot. Desktop and tablet keep the full photo. */
+@media (max-width: 700px) {
+  .about-photo-large { min-height: 0; aspect-ratio: 4 / 3; }
+  .about-photo-large img { object-position: 50% 76%; transform: scale(1.3); transform-origin: 50% 76%; }
+  .about-photo-large:hover img { transform: scale(1.34); }
+}
+
+/* Phone: two chapters per row, so the list is about half as tall. */
+@media (max-width: 560px) {
+  .guide-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .guide-chapters > li { padding: 14px 13px 16px; border-radius: 15px; }
+  .guide-chapter-num { font-size: 11px; letter-spacing: .14em; }
+  .guide-chapters h3 { margin-top: 7px; font-size: 15px; line-height: 1.18; }
+  .guide-chapters > li > p { margin-top: 6px; font-size: 12.5px; line-height: 1.4; }
+  /* The last chapter and the guide link share the final row, matched in height. */
+  .guide-chapters > li { align-self: stretch; }
+  .guide-chapters > li.guide-chapters-cta { grid-column: auto; flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 13px 16px; }
+  .guide-chapters-cta > svg { flex: none; width: 22px; }
+  .guide-chapters-cta h3 { margin: 0; }
+  .guide-chapters-cta a { margin-top: auto; font-size: 13px; }
+}
+
+/* Phone: the open guide is its own card, sized to fit one screen. */
+@media (max-width: 560px) {
+  .guide-detail { width: auto; max-width: calc(100vw - 32px); margin-inline: auto; padding: 18px 16px 16px; border: 1px solid rgba(101,139,184,.3); border-radius: 22px; background: rgba(255,255,255,.95); box-shadow: 0 22px 50px rgba(26,62,104,.16); backdrop-filter: blur(6px); }
+  .guide-detail h2 { font-size: 30px; }
+  .guide-detail-kicker { margin-bottom: 8px; font-size: 10.5px; letter-spacing: .16em; }
+  .guide-detail-lede { margin-top: 10px; font-size: 14px; line-height: 1.45; }
+  /* Three even columns so the figures and their labels line up. */
+  .guide-detail-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 14px; padding: 12px 0; }
+  .guide-detail-meta > div { margin: 0; padding: 0 10px; border-right: 1px solid rgba(11,36,71,.14); }
+  .guide-detail-meta > div:first-child { padding-left: 0; }
+  .guide-detail-meta > div:last-child { padding-right: 0; border-right: 0; }
+  .guide-detail-meta dd { margin-top: 4px; line-height: 1.35; }
+  .guide-detail-meta dt { font-size: 17px; }
+  .guide-detail-meta dd { font-size: 11.5px; }
+  /* Three buttons in a row leaves them all cramped: the referral button leads on its own line,
+     with the download and the call beneath it. */
+  .guide-detail-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; width: 100%; margin-top: 14px; padding: 8px; border-radius: 22px; }
+  .guide-detail-refer { grid-row: 1; grid-column: 1 / -1; min-height: 48px; font-size: 14.5px; }
+  .guide-detail-download { grid-row: 2; grid-column: 1; min-width: 0; min-height: 44px; font-size: 13px; }
+  .guide-detail-call { grid-row: 2; grid-column: 2; width: 44px; height: 44px; }
+  .guide-detail-close { position: absolute; top: 10px; right: 10px; left: auto; width: 38px; height: 38px; margin: 0; }
+  .guide-detail-close svg { width: 17px; }
 }
