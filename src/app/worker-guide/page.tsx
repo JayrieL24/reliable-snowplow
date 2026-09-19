@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/worker-guide" },
 };
 
+/* The hero is on screen already, so its parts are dealt in on load. The copy block turns into
+   display:contents once it stacks, so each child carries its own animation. */
+const enter = (delay: number) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const } });
 const reveal = { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, amount: 0.12 }, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const } };
 
 // Module-level, so the 3D book gets the same array on every render and doesn't repaint.
@@ -34,25 +37,25 @@ export default function WorkerGuidePage() {
             id="guide-book", which the book looks itself up by when a link to #open-guide opens it. */}
         <section className="guide-showcase guide-hero" id="guide-book" aria-labelledby="page-hero-title">
           <div className="guide-showcase-copy">
-            <nav className="page-crumbs" aria-label="Breadcrumb">
+            <motion.nav className="page-crumbs" aria-label="Breadcrumb" {...enter(0)}>
               <a href="/">Home</a>
               <span aria-hidden="true">/</span>
               <span aria-current="page">Worker guide</span>
-            </nav>
-            <p className="clean-kicker">The guide</p>
-            <h1 id="page-hero-title">Know the program before you <em>refer.</em></h1>
-            <p>Rules, rates and roles in one short guide, written for referrers and the snow fighters they send to Reliable.</p>
-            <div className="scene-actions">
+            </motion.nav>
+            <motion.p className="clean-kicker" {...enter(0.06)}>The guide</motion.p>
+            <motion.h1 id="page-hero-title" {...enter(0.12)}>Know the program before you <em>refer.</em></motion.h1>
+            <motion.p {...enter(0.2)}>Rules, rates and roles in one short guide, written for referrers and the snow fighters they send to Reliable.</motion.p>
+            <motion.div className="scene-actions" {...enter(0.28)}>
               {/* Straight to the referral form page with the worker form selected. */}
               <a className="scene-primary" href="/refer-a-worker">Explore worker referrals <ArrowRight aria-hidden="true" /></a>
               <a className="scene-secondary" href={SFU_PHONE.href}><Phone aria-hidden="true" /> Call SFU {SFU_PHONE.label}</a>
-            </div>
+            </motion.div>
             {/* The program's headline terms, all from the client's changelist. */}
-            <dl className="guide-hero-terms">
+            <motion.dl className="guide-hero-terms" {...enter(0.36)}>
               <div><dt>$1.00</dt><dd>For every hour they work</dd></div>
               <div><dt>1 day</dt><dd>From shift to payday</dd></div>
               <div><dt>All levels</dt><dd>First-timers to operators</dd></div>
-            </dl>
+            </motion.dl>
           </div>
           <GuideBook chapters={CHAPTER_TITLES} />
         </section>

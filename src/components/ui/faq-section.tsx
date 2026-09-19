@@ -1,8 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { motion, type Variants } from "motion/react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+/* The heading arrives first, then the questions follow it down the list. */
+const HEAD = { initial: { opacity: 0, y: 22 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.4 }, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } };
+const LIST: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+const ITEM: Variants = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } } };
 
 export type FaqItem = { id: string; q: string; a: React.ReactNode };
 
@@ -60,17 +66,17 @@ export function FaqSection({
     <section className={cn("faq", className)} id="faq">
 
       <div className="faq-inner">
-        <div className="faq-copy">
+        <motion.div className="faq-copy" {...HEAD}>
           <p className="faq-eyebrow">{eyebrow}</p>
           <h2>{heading ?? <>Answers before<br />you send one.</>}</h2>
           {intro ? <p className="faq-intro">{intro}</p> : null}
-        </div>
+        </motion.div>
 
-        <ul className="faq-list">
+        <motion.ul className="faq-list" initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.1 }} variants={LIST}>
           {items.map((item) => {
             const isOpen = openId === item.id;
             return (
-              <li key={item.id} className={cn("faq-item", isOpen && "is-open")}>
+              <motion.li key={item.id} className={cn("faq-item", isOpen && "is-open")} variants={ITEM}>
                 <h3>
                   <button
                     type="button"
@@ -93,10 +99,10 @@ export function FaqSection({
                 >
                   <p>{item.a}</p>
                 </div>
-              </li>
+              </motion.li>
             );
           })}
-        </ul>
+        </motion.ul>
       </div>
     </section>
   );
