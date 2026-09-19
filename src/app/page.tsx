@@ -3,7 +3,6 @@ import * as motion from "motion/react-client";
 import {
   ArrowRight,
   ArrowUpRight,
-  BadgeDollarSign,
   Building2,
   CheckCircle2,
   Clock3,
@@ -17,6 +16,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { DollarMark } from "@/components/ui/dollar-mark";
 import { FaqSection } from "@/components/ui/faq-section";
 import { ProcessBento } from "@/components/ui/process-bento";
 import { SceneNavbar } from "@/components/ui/scene-navbar";
@@ -78,7 +78,7 @@ export default function HomePage() {
         <div className="scene-trust" aria-label="Program benefits">
           <p><Users aria-hidden="true" /><span>Stronger<br />communities</span></p>
           <p><ShieldCheck aria-hidden="true" /><span>Safer<br />winters</span></p>
-          <p><BadgeDollarSign aria-hidden="true" /><span>Real<br />rewards</span></p>
+          <p><DollarMark aria-hidden="true" /><span>Real<br />rewards</span></p>
         </div>
         <p className="scene-side-note">CUSTOMER REFERRALS<br />WORKER REFERRALS</p>
         <p className="scene-signoff"><strong>Never more than 15 minutes away.</strong><span>Reliable Snow Plowing</span></p>
@@ -126,7 +126,14 @@ export default function HomePage() {
         <div className="about-grid">
           <div className="about-side">
             <div className="about-photo about-photo-small">
-              <Image src="/images/about/snow-fighter-shoveling.png" alt="A smiling Reliable snow fighter shoveling during a night snowfall" fill sizes="(max-width: 900px) 100vw, 34vw" />
+              <img
+                src="/images/about/snow-fighter-shoveling.webp"
+                srcSet="/images/about/snow-fighter-shoveling-sm.webp 520w, /images/about/snow-fighter-shoveling.webp 800w"
+                sizes="(max-width: 900px) 130vw, (max-width: 1200px) 44vw, 540px"
+                alt="A smiling Reliable snow fighter shoveling during a night snowfall"
+                decoding="async"
+                loading="lazy"
+              />
             </div>
             <div className="about-proof">
               <div className="about-avatars" aria-hidden="true">
@@ -139,7 +146,19 @@ export default function HomePage() {
           </div>
 
           <div className="about-photo about-photo-large">
-            <Image src="/images/reliable-team.jpg" alt="The Reliable Snow Plowing team outside the company's headquarters" fill sizes="(max-width: 900px) 100vw, 62vw" />
+            {/* Static export builds no srcset of its own, so without one the browser is handed the
+                full-size photo at every width and shrinks it roughly twofold, which it does badly and
+                which is what blurred the faces. These sizes describe the width the image is actually
+                painted at - wider than its box on narrow screens, because it is cropped to fit by
+                height - so each screen and pixel density gets the plate nearest its own size. */}
+            <img
+              src="/images/reliable-team.webp"
+              srcSet="/images/reliable-team-xs.webp 500w, /images/reliable-team-sm.webp 700w, /images/reliable-team-md.webp 1000w, /images/reliable-team.webp 1800w"
+              sizes="(max-width: 560px) 112vw, (max-width: 900px) 108vw, (max-width: 1400px) 66vw, 880px"
+              alt="The Reliable Snow Plowing team outside the company's headquarters"
+              decoding="async"
+              loading="lazy"
+            />
             <dl className="about-stats">
               <div><dt>40+</dt><dd>Years of<br />Ohio winters</dd></div>
               <div><dt>50</dt><dd>Satellite<br />locations</dd></div>
@@ -202,7 +221,7 @@ export default function HomePage() {
           <div className="guide-features">
             <span><CheckCircle2 aria-hidden="true" /> Clear expectations</span>
             <span><ShieldCheck aria-hidden="true" /> Safety guidance</span>
-            <span><BadgeDollarSign aria-hidden="true" /> Program rates</span>
+            <span><DollarMark aria-hidden="true" /> Program rates</span>
           </div>
           <div className="guide-card">
             <span className="guide-file-icon"><FileText aria-hidden="true" /></span>
@@ -246,7 +265,7 @@ export default function HomePage() {
             <li><HardHat aria-hidden="true" /><span><strong>Jobs for every experience level</strong>Some roles require no experience, while others need experienced operators.</span></li>
             <li><Gift aria-hidden="true" /><span><strong>$1 an hour, indefinitely</strong>For every hour your referred snow fighter works.</span></li>
             <li><ShieldCheck aria-hidden="true" /><span><strong>Safety throughout Ohio</strong>Help keep properties, roads and communities safer all winter.</span></li>
-            <li><BadgeDollarSign aria-hidden="true" /><span><strong>Seasonal income</strong>Winter work provides seasonal income with next day pay for every position.</span></li>
+            <li><DollarMark aria-hidden="true" /><span><strong>Seasonal income</strong>Winter work provides seasonal income with next day pay for every position.</span></li>
           </ul>
           <a className="section-cta" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
         </motion.div>
@@ -257,19 +276,20 @@ export default function HomePage() {
       <div className="closing-band">
         {/* Referral CTA: a thin, full-bleed photo banner under the light process band. */}
         <section className="referral-cta referral-cta-light" id="make-a-referral" aria-labelledby="referral-cta-title">
+          {/* The three parts arrive in reading order rather than the band fading in as one piece. */}
           <div className="referral-cta-inner">
-            <div className="referral-cta-copy">
+            <motion.div className="referral-cta-copy" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
               <p className="clean-kicker">Ready to make the connection?</p>
               <h2 id="referral-cta-title">Know a property or a <em>snow fighter?</em></h2>
-            </div>
-            <ul className="referral-cta-rewards">
+            </motion.div>
+            <motion.ul className="referral-cta-rewards" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}>
               <li><strong>5%</strong><span>per commercial referral, up to $3,000</span></li>
               <li><strong>$1/hr</strong><span>for every hour a referred worker works</span></li>
-            </ul>
-            <div className="referral-cta-actions">
+            </motion.ul>
+            <motion.div className="referral-cta-actions" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.6, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}>
               <a className="scene-primary" href="/refer-a-customer#referral-form">Refer a customer <ArrowRight aria-hidden="true" /></a>
               <a className="scene-secondary" href="/refer-a-worker#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
-            </div>
+            </motion.div>
           </div>
         </section>
 

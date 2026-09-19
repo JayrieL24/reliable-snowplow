@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import * as motion from "motion/react-client";
-import { ArrowDown, ArrowRight, Clock3, ArrowUpRight, BadgeDollarSign, CalendarCheck, Check, CheckCircle2, GraduationCap, HardHat, Infinity as InfinityIcon, Mail, MapPin, MessageSquareText, Phone, UserPlus, Users } from "lucide-react";
+import { ArrowDown, ArrowRight, Clock3, ArrowUpRight, CalendarCheck, Check, CheckCircle2, GraduationCap, HardHat, Infinity as InfinityIcon, Mail, MapPin, MessageSquareText, Phone, UserPlus, Users } from "lucide-react";
+import { DollarMark } from "@/components/ui/dollar-mark";
 import { ComingSoonModal } from "@/components/ui/coming-soon";
 import { WorkerReferralForm } from "@/components/ui/worker-referral-form";
 import { FaqSection } from "@/components/ui/faq-section";
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
 
 const reveal = { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, amount: 0.12 }, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const } };
 /* The first section after the hero fades and rises into place, as on Refer a Customer. */
+/* The hero is already on screen, so its parts are dealt in on load rather than on scroll. The copy
+   block turns into display:contents on a phone, so each child animates on its own account. */
+const enter = (delay: number) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const } });
 const revealRise = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.15 }, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const } };
 
 /* The next day pay video. The client's own program walkthrough isn't recorded yet, so this
@@ -30,7 +34,7 @@ const NDP_VIDEO = { youtubeId: "oWfCgCu-XPY", title: "Next day pay at Reliable",
 /* Beside the program video: links down to the sections that cover each topic in full, so the
    rail works as a short menu instead of repeating their copy. */
 const VIDEO_LINKS = [
-  { icon: BadgeDollarSign, title: "Compensation", stat: "$1.00", unit: "per hour", href: "#compensation",
+  { icon: DollarMark, title: "Compensation", stat: "$1.00", unit: "per hour", href: "#compensation",
     text: "Earned on every hour your referral works, for as long as they stay." },
   { icon: HardHat, title: "Open positions", stat: String(POSITIONS.length), unit: "winter roles", href: "#job-openings",
     text: "Shovelers, operators, drivers and more. Some need no experience." },
@@ -42,7 +46,7 @@ const VIDEO_LINKS = [
 const PAY_STEPS = [
   { icon: UserPlus, title: "You refer a snow fighter", text: "Send their details through the referral form below." },
   { icon: HardHat, title: "They join Reliable", text: "The team reaches out and places them in a role." },
-  { icon: BadgeDollarSign, title: "You earn every hour", text: "$1.00 for each hour they work, with no end date." },
+  { icon: DollarMark, title: "You earn every hour", text: "$1.00 for each hour they work, with no end date." },
 ];
 
 /* Square edits of the work photos keep the job grid's framing and lighting consistent. */
@@ -66,19 +70,19 @@ export default function ReferAWorkerPage() {
           <Image className="page-hero-truck" src="/images/hero/reliable-plow.webp" alt="" width={1536} height={1024} priority />
 
           <div className="page-hero-copy">
-            <p className="scene-kicker">Worker referral program</p>
-            <h1 id="page-hero-title">Refer a snow fighter. <em>Earn $1/hr.</em></h1>
-            <p>Know someone ready for winter work? Earn $1.00 for every hour they work, indefinitely, while they get next day pay close to home.</p>
-            <div className="scene-actions">
+            <motion.p className="scene-kicker" {...enter(0)}>Worker referral program</motion.p>
+            <motion.h1 id="page-hero-title" {...enter(0.08)}>Refer a snow fighter. <em>Earn $1/hr.</em></motion.h1>
+            <motion.p {...enter(0.16)}>Know someone ready for winter work? Earn $1.00 for every hour they work, indefinitely, while they get next day pay close to home.</motion.p>
+            <motion.div className="scene-actions" {...enter(0.24)}>
               <a className="scene-primary" href="#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
-              <a className="scene-secondary" href="#job-openings"><span className="wk-cta-full">See open positions</span><span className="wk-cta-short">Open positions</span> <ArrowRight aria-hidden="true" /></a>
-            </div>
-            <dl className="page-hero-stats">
+              <a className="scene-secondary" href="#job-openings"><span className="wk-cta-full">See Positions</span><span className="wk-cta-short">Positions</span> <ArrowRight aria-hidden="true" /></a>
+            </motion.div>
+            <motion.dl className="page-hero-stats" {...enter(0.32)}>
               <div><dt>$1/hr</dt><dd>for every hour they work</dd></div>
               <div><dt>{POSITIONS.length}</dt><dd>open positions</dd></div>
               <div><dt>1 day</dt><dd>to payday</dd></div>
               <div><dt>50</dt><dd>satellite locations</dd></div>
-            </dl>
+            </motion.dl>
           </div>
         </section>
 
@@ -135,7 +139,7 @@ export default function ReferAWorkerPage() {
             </article>
 
             <article className="pay-fact pay-fact-featured">
-              <BadgeDollarSign aria-hidden="true" />
+              <DollarMark aria-hidden="true" />
               <p className="pay-fact-figure">$1.00</p>
               <strong>Per hour they work</strong>
               <span>Paid to you for every hour your referred snow fighter works for Reliable.</span>
@@ -161,7 +165,7 @@ export default function ReferAWorkerPage() {
                 <HardHat aria-hidden="true" />
                 <span><strong>Find the right role for them</strong>{POSITIONS.length} winter positions, for first-timers and seasoned operators.</span>
               </span>
-              <span className="section-cta pay-next-cta">See open positions <ArrowDown aria-hidden="true" /></span>
+              <span className="section-cta pay-next-cta">See Positions <ArrowDown aria-hidden="true" /></span>
             </a>
           </div>
         </motion.section>
@@ -173,7 +177,10 @@ export default function ReferAWorkerPage() {
             <p className="clean-kicker">Job openings</p>
             <h2 id="work-jobs-title">Snow fighters <em>wanted.</em></h2>
             <p>{POSITIONS.length} positions this winter, for first-timers and seasoned operators. Pick the one that fits the person you&apos;re referring.</p>
-            <a className="section-cta" href="#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
+            <div className="jobs-head-actions">
+              <a className="section-cta" href="#referral-form">Refer a worker <ArrowRight aria-hidden="true" /></a>
+              <a className="scene-secondary" href="/worker-guide">Read the worker guide <ArrowRight aria-hidden="true" /></a>
+            </div>
           </div>
 
           <JobOpeningsGrid jobs={jobCards} shown={JOB_CARDS_SHOWN} />
@@ -209,7 +216,7 @@ export default function ReferAWorkerPage() {
             <h2 id="work-ndp-title">Paid the day after <em>you work.</em></h2>
             <p>Most winter jobs make you wait for a weekly or biweekly check. At Reliable, every position is paid the next day, so a long storm pays off right away.</p>
           </div>
-          <PayComparisonSlider image="/images/about/snow-fighter-shoveling.png" alt="A smiling Reliable snow fighter shoveling during a night snowfall" />
+          <PayComparisonSlider image="/images/about/pay-reliable-after-shift.webp" typicalImage="/images/about/pay-typical-waiting.webp" alt="A snow worker checking their phone beside a parked plow vehicle after a shift" />
           <ul className="ndp-ticks">
             <li><CheckCircle2 aria-hidden="true" /> Paid the day after every shift</li>
             <li><CheckCircle2 aria-hidden="true" /> Storm hours show up right away</li>

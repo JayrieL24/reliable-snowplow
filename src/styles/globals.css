@@ -958,7 +958,6 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
   .showcase-landscape .showcase-label { margin-top: 0; }
 }
 
-
 /* Home feature 2: introductory video (components/ui/video-lightbox.tsx). */
 /* Same proportions as the customer/worker program blocks (.referral-program). */
 .intro-video { --video-bleed: max(36px, calc((100vw - 1480px) / 2)); --video-cut: 14%; display: grid; grid-template-columns: minmax(360px, .72fr) minmax(520px, 1.28fr); gap: clamp(28px, 3vw, 56px); align-items: center; min-height: 820px; padding: 96px var(--video-bleed); background: white; position: relative; isolation: isolate; }
@@ -1000,7 +999,12 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 /* An outline would be clipped away with the corner, so the focus ring goes inside the frame. */
 .intro-video .intro-video-card:focus-visible { outline: none; }
 .intro-video .intro-video-card:focus-visible .intro-video-frame { box-shadow: inset 0 0 0 4px #3978c4; }
-.video-modal-card { position: relative; width: min(1080px, 100%); aspect-ratio: 16 / 9; border-radius: 18px; background: #000; box-shadow: 0 30px 100px rgba(1,12,28,.5); animation: modal-rise .25s ease-out; }
+/* The card used to take its size from the width alone, so on a short or landscape screen it grew
+   taller than the viewport: the foot ran off the bottom and the close button, which sits above the
+   card, went off the top. The third term caps the width by the height actually available - the
+   scrim's own padding plus the room the close button needs. The first declaration is the fallback
+   for anything without dvh. */
+.video-modal-card { position: relative; width: min(1080px, 100%); width: min(1080px, 100%, calc((100dvh - 108px) * 16 / 9)); aspect-ratio: 16 / 9; border-radius: 18px; background: #000; box-shadow: 0 30px 100px rgba(1,12,28,.5); animation: modal-rise .25s ease-out; }
 .video-modal-card iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 18px; }
 .video-modal-card .preview-modal-close { top: -52px; right: 0; }
 
@@ -1037,7 +1041,6 @@ form input:focus, form textarea:focus { border-color: var(--navy); box-shadow: 0
 .story-photo-layer { position: absolute; inset: -7% 0; display: block; transform: translate3d(0, var(--story-drift, 0px), 0); will-change: transform; }
 .story-photo-layer img { object-fit: cover; object-position: 50% 50%; }
 .story-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 62%, rgba(4,18,36,.35) 100%); pointer-events: none; }
-
 
 @media (max-width: 900px) {
   .story-split { grid-template-columns: 1fr; gap: 30px; }
@@ -2037,6 +2040,17 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .jobs-head h2 { margin: 0; color: #071936; font-size: clamp(48px, 5vw, 76px); font-weight: 790; line-height: .96; letter-spacing: -.065em; }
 .jobs-head h2 em { color: #3978c4; font-style: normal; }
 .jobs-head > p { max-width: 620px; margin: 24px auto 0; color: #314564; font-size: 18px; line-height: 1.55; }
+/* The shared .section-cta pushes its label and arrow to opposite ends of a 300px bar, which suits
+   it inside a bento panel but reads as a strip rather than a button when it stands alone under the
+   heading. Here it is closed up and centred, and given the air it was missing above. */
+.jobs-head-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: clamp(28px, 2.8vw, 40px); }
+.jobs-head .section-cta { justify-content: center; gap: 11px; min-width: 0; padding: 0 32px; }
+/* .scene-secondary is drawn for the dark heroes; on this light band it takes the outline treatment
+   the other light sections use, and the primary's height and radius so the two read as a pair. */
+.jobs-head .scene-secondary { min-height: 60px; padding: 0 28px; border: 1px solid rgba(11,29,60,.26); border-radius: 4px; background: rgba(255,255,255,.82); color: #0b1d3c; font-size: 15px; backdrop-filter: none; }
+.jobs-head .scene-secondary:hover { border-color: var(--navy-dark); background: #fff; }
+.jobs-head .scene-secondary:focus-visible { outline: 2px solid #3978c4; }
+.jobs-head .scene-secondary svg { width: 18px; }
 .jobs-head .sfu-call { margin-top: 30px; }
 /* Photo cards: a square photo with its tag, then the title, one perk line and an Apply pill. */
 .jobs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin: 0; padding: 0; list-style: none; }
@@ -2048,6 +2062,17 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .job-card-media img { object-fit: cover; transition: transform .5s ease; }
 .job-card:hover .job-card-media img { transform: scale(1.05); }
 .job-card-tag { position: absolute; top: 16px; left: 16px; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.94); color: #0b1d3c; font-size: 12px; font-weight: 780; box-shadow: 0 6px 18px rgba(1,10,23,.18); }
+/* Only the tag that changes who can apply is carried on the card. The rest are selling points -
+   "CDL not always needed", "Enclosed with heat" - which belong in the role's modal rather than
+   stacked over every photograph. Held at every width so the grid reads the same throughout. */
+.job-card-tag:not(.job-card-tag-open) { display: none; }
+/* The one tag that changes who can apply. Built like the Next Day Pay banner rather than the
+   neutral pill: a red plate cut on the slant carrying white caps, in the same red (#bf1e2e, sampled
+   from that artwork). The thin white edge around it is what holds the plate off the photograph
+   behind it. The shadow is a filter, not a box-shadow, because clip-path would cut a box-shadow off
+   at the straight edges of the box. */
+.job-card-tag-open { --tag-red: #bf1e2e; display: inline-flex; padding: 0; border-radius: 0; background: #fff; box-shadow: none; clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%); filter: drop-shadow(0 6px 14px rgba(103,12,23,.42)); }
+.job-card-tag-open > span { display: block; margin: 1px; padding: 5px 13px 5px 16px; background: var(--tag-red); color: #fff; font-size: 11px; font-weight: 850; letter-spacing: .08em; line-height: 1.1; text-transform: uppercase; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
 .job-card-body { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; }
 .job-card-text { display: flex; flex-direction: column; gap: 5px; min-width: 0; color: #52647e; font-size: 14px; line-height: 1.45; }
 .job-card-text strong { color: #0b1d3c; font-size: 20px; font-weight: 790; line-height: 1.2; letter-spacing: -.03em; }
@@ -2062,6 +2087,9 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 
 /* A role opened from the compact phone cards. Sits in the site's existing .preview-modal scrim. */
 .job-modal-card { position: relative; display: flex; flex-direction: column; width: min(420px, 100%); max-height: 88svh; overflow-y: auto; border: 1px solid rgba(101,139,184,.28); border-radius: 22px; background: white; box-shadow: 0 40px 90px rgba(1,10,23,.45); }
+/* The photograph is a positioned element that follows the close button in the source, so without
+   a z-index of its own the button is painted over and the modal has no visible way out. */
+.job-modal-card .preview-modal-close { z-index: 2; box-shadow: 0 8px 22px rgba(1,10,23,.28); }
 .job-modal-media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 21px 21px 0 0; background: #d8e9f8; }
 .job-modal-media img { object-fit: cover; }
 .job-modal-body { padding: 20px 22px 24px; }
@@ -2073,20 +2101,32 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .job-modal-perks li::before { content: ""; flex: 0 0 6px; height: 6px; border-radius: 50%; background: var(--orange); }
 .job-modal-body .section-cta { justify-content: center; width: 100%; min-width: 0; margin-top: 20px; }
 
-/* Phones: the job cards become a thumbnail beside the role name, and open the modal above. */
-@media (max-width: 560px) {
-  .jobs-grid { gap: 10px; }
-  .job-card { flex-direction: row; align-items: center; gap: 13px; padding: 10px; border-radius: 16px; }
+/* Up to 1191px each card is the photograph itself, two to a row, with the role name floating over
+   its foot. Only above that is there room for the three-up card with its own white body and button.
+   Sizes are fluid across the band, which runs from a 160px card on a phone to a 570px one. */
+@media (max-width: 1191px) {
+  /* The li drops to block so the ratio on the card sets its height, rather than the grid row
+     stretching the card to fill it. */
+  .jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.5vw, 20px); }
+  .jobs-grid > li { display: block; }
+  .job-card { position: relative; display: block; aspect-ratio: 3 / 4; gap: 0; padding: 0; border-radius: clamp(16px, 1.7vw, 22px); }
   .job-card:hover { transform: none; }
-  .job-card-media { flex: 0 0 74px; width: 74px; border-radius: 11px; }
-  /* The tag reads better under the name here than floating on a 74px thumbnail. */
-  .job-card-tag { display: none; }
-  .job-card-body { flex: 1; min-width: 0; gap: 10px; padding: 0; }
-  .job-card-text { gap: 3px; font-size: 12.5px; }
-  .job-card-text strong { font-size: 18px; }
-  /* The whole card opens the role, so it needs no button of its own — just an affordance. */
+  .job-card-media { position: absolute; inset: 0; flex: none; width: auto; aspect-ratio: auto; border-radius: 0; }
+  .job-card-tag.job-card-tag-open { display: inline-flex; top: clamp(8px, 1.1vw, 15px); left: clamp(7px, 1vw, 14px); padding: 0; }
+  /* The scrim starts well above the text so the type never sits on bare photograph. */
+  .job-card-body { position: absolute; inset: auto 0 0; z-index: 1; display: block; min-width: 0; padding: clamp(48px, 7vw, 96px) clamp(11px, 1.6vw, 22px) clamp(11px, 1.6vw, 20px); background: linear-gradient(180deg, rgba(3,14,28,0), rgba(3,14,28,.52) 44%, rgba(3,14,28,.9)); }
+  /* The supporting line is held well below the role name so a long one - "Enclosed with heat, new
+     low-hour machines" - reads as a note under the title rather than competing with it. */
+  .job-card-text { gap: clamp(4px, .5vw, 7px); font-size: clamp(10.5px, 1.15vw, 15px); line-height: 1.35; color: rgba(222,233,246,.88); }
+  .job-card-text strong { color: #fff; font-size: clamp(14.5px, 1.8vw, 24px); letter-spacing: -.025em; }
+  /* The whole card opens the role, so it needs no button of its own. */
   .job-card-apply { display: none; }
-  .job-card-body::after { content: ""; flex: none; width: 8px; height: 8px; margin-right: 4px; border-top: 2px solid #8aa3bf; border-right: 2px solid #8aa3bf; transform: rotate(45deg); }
+}
+
+/* Phones keep the tightest cut of the tag, where the plate has only a 160px card to sit on. */
+@media (max-width: 560px) {
+  .job-card-tag.job-card-tag-open { clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%); }
+  .job-card-tag-open > span { margin: 0.75px; padding: 3px 8px 3px 11px; font-size: 8.5px; letter-spacing: .05em; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
   .jobs-all { margin-top: 24px; }
 }
 /* Apply placeholder page (app/apply): the chosen role's perks as chips in the hero. */
@@ -2127,20 +2167,37 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .ndp-head > p { max-width: 640px; margin: 22px auto 0; color: #314564; font-size: 18px; line-height: 1.55; }
 
 /* Before/after slider. */
-.ndp-compare { position: relative; max-width: 1100px; aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; border-radius: 28px; background: #0b2447; box-shadow: 0 34px 80px rgba(26,62,104,.22); cursor: ew-resize; touch-action: pan-y; user-select: none; }
+/* The head sits near the top of this photograph, and the caption above it needs roughly 145px to
+   clear the forehead. A 16/9 frame is only ~365px tall at 720px wide, so the floor below keeps the
+   frame tall enough for that band at every width rather than only the widest ones. */
+.ndp-stage { max-width: 1100px; margin: 0 auto; }
+.ndp-compare { position: relative; width: 100%; max-width: none; aspect-ratio: 16 / 9; min-height: min(660px, 88vw); margin: 0; overflow: hidden; border-radius: 28px; background: #0b2447; box-shadow: 0 34px 80px rgba(26,62,104,.22); cursor: ew-resize; touch-action: pan-y; user-select: none; }
 .ndp-layer { position: absolute; inset: 0; }
 .ndp-layer img { object-fit: cover; object-position: 40% 40%; pointer-events: none; }
 .ndp-layer-reliable img { filter: saturate(1.2) brightness(1.08) contrast(1.04); }
 .ndp-layer-reliable::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,196,120,.06), rgba(4,18,36,.05) 45%, rgba(4,18,36,.62)); pointer-events: none; }
 .ndp-layer-typical img { filter: grayscale(.92) brightness(.62) contrast(.85) blur(.4px); }
 .ndp-layer-typical::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(40,48,58,.35), rgba(12,16,22,.72)); pointer-events: none; }
-.ndp-side { position: absolute; z-index: 1; bottom: clamp(20px, 3vw, 36px); width: min(390px, 42%); }
-.ndp-side-left { left: clamp(20px, 3vw, 36px); }
-.ndp-side-right { right: clamp(20px, 3vw, 36px); text-align: right; }
+/* Reliable rides the top edge and the typical job the bottom, each keeping its own corner of the
+   frame so the two never trade places. The subject stands in the middle, between them. Both are held
+   narrow and compact: this photograph puts the head close to the top edge, so the upper caption has
+   only the band above the hood to work with. Each belongs to the half it names: full strength once
+   the handle has uncovered that half, gone once it has run past it. */
+.ndp-sides { display: contents; }
+.ndp-side { position: absolute; z-index: 2; left: clamp(20px, 3vw, 36px); width: min(400px, calc(100% - 2 * clamp(20px, 3vw, 36px))); transition: opacity .18s ease; }
+.ndp-side-left { top: clamp(10px, 1.2vw, 16px); }
+/* Diagonally opposite on a wide frame, so the two readings are not stacked down one edge. */
+.ndp-side-right { right: clamp(20px, 3vw, 36px); bottom: clamp(16px, 2.4vw, 30px); left: auto; text-align: right; }
+.ndp-side-left { opacity: clamp(0, calc((var(--ndp-pos, 50) - 18) / 28), 1); }
+.ndp-side-right { opacity: clamp(0, calc((82 - var(--ndp-pos, 50)) / 28), 1); }
+.ndp-side-label { margin-bottom: 0; }
 .ndp-side-label { display: inline-block; margin: 0; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .ndp-side-right .ndp-side-label { background: rgba(255,255,255,.14); color: #c9d0d8; }
 .ndp-side-left .ndp-side-label { background: var(--orange); color: #111925; }
-.ndp-side-pay { margin: 12px 0 14px; color: white; font-size: clamp(22px, 2.6vw, 38px); font-weight: 790; line-height: 1.05; letter-spacing: -.045em; text-shadow: 0 4px 22px rgba(0,0,0,.45); }
+/* Kept to one line: "Paid the next day" breaking after "next" reads as two separate thoughts. The
+   size is tied to the viewport on narrow screens so the longer of the two - "Paid in up to 2 weeks"
+   - still fits the half-width caption rather than running out of it. */
+.ndp-side-pay { margin: 6px 0 8px; color: white; font-size: clamp(16px, 1.9vw, 25px); font-weight: 790; line-height: 1.05; white-space: nowrap; letter-spacing: -.045em; text-shadow: 0 4px 22px rgba(0,0,0,.45); }
 .ndp-side-right .ndp-side-pay { color: #d5dae0; }
 .ndp-days { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 4px; margin: 0; padding: 8px; border-radius: 12px; background: rgba(4,18,36,.45); backdrop-filter: blur(8px); list-style: none; }
 .ndp-days li { display: grid; place-items: center; aspect-ratio: 1; border-radius: 6px; background: rgba(255,255,255,.1); color: rgba(255,255,255,.55); font-size: 10px; font-weight: 700; }
@@ -2148,12 +2205,20 @@ form select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(25,63,
 .ndp-days .is-work { background: white; color: #0b1d3c; }
 .ndp-days .is-pay { background: var(--orange); color: #111925; }
 .ndp-side-right .ndp-days .is-pay { background: #9aa3ad; }
-.ndp-handle { position: absolute; z-index: 2; top: 0; bottom: 0; width: 3px; background: white; box-shadow: 0 0 18px rgba(0,0,0,.35); transform: translateX(-50%); }
+
+/* A row of fourteen needs the caption to run most of the frame, and below about 1000px that carries
+   it across the divider and into the other caption's half. Here the fortnight folds into two rows of
+   seven - a week each - and the caption is sized to stop at the divider, so neither crosses. */
+@media (max-width: 1000px) {
+  .ndp-side { width: min(calc(46% - 18px), 262px); }
+  .ndp-days { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}
+.ndp-handle { position: absolute; z-index: 3; top: 0; bottom: 0; width: 3px; background: white; box-shadow: 0 0 18px rgba(0,0,0,.35); transform: translateX(-50%); }
 .ndp-handle:focus-visible { outline: none; }
 .ndp-handle-knob { position: absolute; top: 50%; left: 50%; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 50%; background: white; color: #0d2d5a; box-shadow: 0 10px 30px rgba(0,0,0,.3); transform: translate(-50%, -50%); transition: transform .2s ease, box-shadow .2s ease; }
 .ndp-handle-knob svg { width: 18px; margin: 0 -3px; }
 .ndp-compare.is-dragging .ndp-handle-knob, .ndp-handle:focus-visible .ndp-handle-knob { box-shadow: 0 0 0 6px rgba(239,125,50,.45), 0 14px 34px rgba(0,0,0,.35); transform: translate(-50%, -50%) scale(1.08); }
-.ndp-hint { position: absolute; z-index: 1; top: 20px; left: 50%; margin: 0; padding: 8px 14px; border-radius: 999px; background: rgba(4,18,36,.55); color: white; font-size: 12px; font-weight: 700; transform: translateX(-50%); backdrop-filter: blur(8px); pointer-events: none; white-space: nowrap; }
+.ndp-hint { display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; margin: 16px auto 0; padding: 8px 16px; border: 1px solid rgba(101,139,184,.28); border-radius: 999px; background: rgba(255,255,255,.7); color: #33485f; font-size: 12.5px; font-weight: 750; pointer-events: none; white-space: nowrap; }
 .ndp-ticks { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 34px; margin: 34px 0 0; padding: 0; list-style: none; }
 .ndp-ticks li { display: flex; align-items: center; gap: 9px; color: #17365f; font-size: 15px; font-weight: 750; }
 .ndp-ticks svg { width: 20px; color: #3978c4; }
@@ -2261,7 +2326,7 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .wvid-link-stat strong { font-size: 19px; }
   .wvid-actions { margin-top: 14px; }
   .wvid-actions > a { width: 100%; }
-  .wrk-affiliate-grid, .jobs-grid { grid-template-columns: 1fr; }
+  .wrk-affiliate-grid { grid-template-columns: 1fr; }
   /* Phone keeps the bento: the big card and the link full width, the two facts side by side. */
   .pay-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .pay-main, .pay-next { grid-column: 1 / -1; grid-row: auto; }
@@ -2281,7 +2346,8 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .pay-main .section-cta, .section-cta.pay-next-cta { width: 100%; min-width: 0; }
   .pay-fact, .pay-next { padding: 24px 22px; }
   .jobs-head h2 { font-size: 44px; }
-  .jobs-head .section-cta { width: 100%; min-width: 0; }
+  .jobs-head-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+  .jobs-head .section-cta, .jobs-head .scene-secondary { width: 100%; min-width: 0; }
   .wrk-legacy { padding-block: 68px; }
   .wrk-legacy-inner { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .wrk-legacy-copy { padding: 0; border: 0; }
@@ -2290,14 +2356,47 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .wrk-legacy-stats { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .wrk-legacy-stats div { padding: 0 8px; }
   .ndp-head h2 { font-size: 44px; }
-  .ndp-compare { aspect-ratio: 4 / 5; border-radius: 18px; }
-  .ndp-side { width: calc(100% - 40px); }
-  .ndp-side-left { top: 64px; bottom: auto; }
-  .ndp-side-right { text-align: left; left: 20px; right: auto; }
-  .ndp-side-pay { margin: 8px 0 10px; font-size: 22px; }
+  /* The photographs are square, so a square frame shows each of them whole with no crop at all. */
+  .ndp-compare { aspect-ratio: 1 / 1; border-radius: 18px; }
+  .ndp-side-pay { margin: 5px 0 7px; font-size: clamp(10.5px, 3.3vw, 19px); }
+  /* The square photographs put both faces in the upper third. A full-width caption would run into
+     them, so on a narrow frame each caption takes half the width and the fortnight folds into two
+     rows of seven - one per week. That keeps Reliable at the top, in the corner beside the worker
+     rather than across his face. */
+  .ndp-side-left { top: 10px; }
+  /* The captions run the width of a narrow frame, so the hint drops into the clear band between
+     them rather than sitting on top of the upper one. */
+  .ndp-hint { margin-top: 13px; font-size: 11.5px; }
   .ndp-days { gap: 2px; padding: 6px; }
   .ndp-days li { border-radius: 4px; font-size: 8px; }
   .ndp-handle-knob { width: 46px; height: 46px; }
+
+}
+
+/* A square frame matches the square photographs, but it is only tall enough for the top caption
+   to clear the worker's face once the card is around 500px tall. Below that the frame goes taller
+   instead - the head sits at a fixed fraction of the height, so a taller frame buys real pixels
+   above it. Without this the caption landed on his face between 401 and 500px. */
+@media (max-width: 560px) {
+  .ndp-compare { aspect-ratio: 3 / 4; }
+}
+
+/* Narrowest phones: the frame is short enough that the stack would reach the drag knob, so the
+   captions are tightened until they sit clear of it. */
+@media (max-width: 400px) {
+  /* A taller frame here: it does not change where the head sits in the picture, but it buys the top
+     caption more actual pixels above it. */
+  /* A little taller than square on the smallest phones, so the stacked captions do not take half
+     the picture. */
+  .ndp-compare { aspect-ratio: 3 / 4; }
+  .ndp-side-left { top: 8px; left: 14px; }
+  .ndp-side-right { right: 14px; bottom: 12px; left: auto; }
+  .ndp-side-label { padding: 3px 8px; font-size: 8px; letter-spacing: .1em; }
+  .ndp-side-pay { margin: 4px 0 5px; }
+  .ndp-days { gap: 1px; padding: 3px; }
+  .ndp-days li { font-size: 7px; }
+  .ndp-handle-knob { width: 38px; height: 38px; }
+  .ndp-handle-knob svg { width: 14px; }
   .ndp-ticks { flex-direction: column; align-items: flex-start; }
   .wrk-affiliate-grid li { padding: 24px; }
   .share-panel { padding: 20px; border-radius: 18px; }
@@ -2411,11 +2510,17 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 .about-side { display: flex; flex-direction: column; gap: 22px; }
 .about-photo { position: relative; overflow: hidden; border: 1px solid rgba(199,220,245,.22); border-radius: 22px; background: #0b2447; box-shadow: 0 24px 60px rgba(1,10,23,.45); }
 .about-photo img { object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+/* The about photos carry their own srcset so each screen gets a plate near its own size; these
+   are the styles next/image would otherwise write inline for a filled image. */
+.about-photo > img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .about-photo:hover img { transform: scale(1.03); }
 .about-photo-small { aspect-ratio: 4 / 3; }
 .about-photo-small img { object-position: 48% 30%; }
-.about-photo-large { min-height: 440px; }
-.about-photo-large img { object-position: 50% 40%; }
+/* A fixed height cropped more of the photo the wider the column got, which took the top off the
+   signage. The ratio holds the crop steady at every width: a little wall above the lettering, and
+   the crew standing clear of the bottom edge. */
+.about-photo-large { aspect-ratio: 7 / 4; }
+.about-photo-large img { object-position: 50% 27%; }
 .about-proof { display: flex; flex-direction: column; gap: 10px; }
 .about-avatars { display: flex; }
 .about-avatars img { width: 46px; height: 46px; border: 3px solid var(--navy-dark); border-radius: 50%; object-fit: cover; box-shadow: 0 6px 14px rgba(16,44,85,.16); }
@@ -2438,11 +2543,14 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
   .about-section { padding: 66px 16px; }
   .about-cta { width: 100%; }
   .about-photo-large { aspect-ratio: 3 / 4; }
-  .about-stats { right: 12px; bottom: 12px; left: 12px; padding: 16px 4px; }
-  .about-stats div { padding: 0 16px; }
+  /* The photograph is short here so that the signage fits, so the figures sit in the corner
+     rather than running the width and covering the crew. */
+  .about-stats { right: 10px; bottom: 10px; left: auto; padding: 11px 2px; border-radius: 14px; }
+  .about-stats div { padding: 0 12px; }
+  .about-stats dt { font-size: 22px; }
+  .about-stats dd { margin-top: 4px; font-size: 10.5px; }
 }
 @media (prefers-reduced-motion: reduce) { .about-photo img { transition: none; } }
-
 
 /* Refer a Customer video section: copy, buttons and stats beside the video. */
 .cvid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: clamp(40px, 4.5vw, 80px); align-items: center; padding: clamp(84px, 7.5vw, 124px) max(24px, calc((100vw - 1480px) / 2)); background: white; }
@@ -2643,26 +2751,32 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 .guide-chapters-cta a:hover svg { transform: translateX(3px); }
 .guide-chapters-cta a:focus-visible { border-radius: 4px; outline: 2px solid white; outline-offset: 3px; }
 
-
 @media (max-width: 980px) {
   .guide-showcase { grid-template-columns: 1fr; padding-block: 78px; }
-  .guide-hero { padding-top: 130px; }
+  /* Once the two columns stack, the copy would push the book below the fold, so the heading leads,
+     the book follows it, and the lede, buttons and figures come after. */
+  .guide-hero { display: flex; flex-direction: column; gap: 0; min-height: 0; padding-top: 118px; padding-bottom: 56px; }
+  .guide-hero .guide-showcase-copy { display: contents; }
+  .guide-hero .page-crumbs, .guide-hero .guide-showcase-copy > .clean-kicker, .guide-hero .guide-showcase-copy h1 { order: 1; }
+  .guide-hero .guide-book { order: 2; margin: 10px auto 4px; }
+  .guide-hero .guide-showcase-copy > p:not(.clean-kicker), .guide-hero .scene-actions, .guide-hero-terms { order: 3; }
   .guide-book-stage { max-width: 520px; }
   .guide-showcase:has(.guide-book[data-open]) .guide-showcase-copy { opacity: 1; transform: none; pointer-events: auto; }
   .guide-book[data-open] .guide-book-stage { transform: none; }
-  .guide-detail { position: static; display: none; width: 100%; padding: 0; }
+  .guide-detail { position: relative; inset: auto; display: none; width: min(560px, 100%); margin-inline: auto; padding: 26px 24px 22px; border: 1px solid rgba(101,139,184,.3); border-radius: 26px; background: rgba(255,255,255,.95); box-shadow: 0 24px 54px rgba(26,62,104,.16); backdrop-filter: blur(6px); }
   .guide-book[data-open] .guide-detail { display: flex; }
-  .guide-detail-close { position: static; align-self: flex-end; margin-bottom: 8px; transform: none; }
+  .guide-detail h2 { font-size: clamp(30px, 5.2vw, 40px); }
+  .guide-detail-lede { margin-top: 14px; font-size: 15px; }
+  .guide-detail-close { position: absolute; top: 12px; right: 12px; left: auto; width: 42px; height: 42px; margin: 0; align-self: auto; transform: none; }
+  .guide-detail-close svg { width: 18px; }
   .guide-detail-actions { width: 100%; border-radius: 26px; }
   .guide-detail-download, .guide-detail-refer { flex: 1 1 auto; justify-content: center; }
 }
 @media (max-width: 560px) {
   .guide-contents { padding: 72px 16px; }
   /* Phone: the heading and the book lead; the lede, buttons and terms follow underneath. */
-  .guide-hero { display: flex; flex-direction: column; gap: 0; min-height: 0; padding-top: 96px; padding-bottom: 48px; }
-  .guide-hero .guide-showcase-copy { display: contents; }
-  .guide-hero .page-crumbs, .guide-hero .guide-showcase-copy > .clean-kicker, .guide-hero .guide-showcase-copy h1 { order: 1; }
-  .guide-hero .guide-book { order: 2; width: calc(100% + 24px); margin: 16px -12px 4px; }
+  .guide-hero { padding-top: 96px; padding-bottom: 48px; }
+  .guide-hero .guide-book { width: calc(100% + 24px); margin: 16px -12px 4px; }
   .guide-hero .guide-book-stage { max-width: none; }
   .guide-hero .guide-showcase-copy > p:not(.clean-kicker), .guide-hero .scene-actions, .guide-hero-terms { order: 3; }
   .guide-hero .guide-showcase-copy h1 { font-size: 37px; text-wrap: balance; }
@@ -2767,9 +2881,11 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
    zooming in on the group puts their faces in the clear, above the stats card, and pushes the
    sign out of shot. Desktop and tablet keep the full photo. */
 @media (max-width: 700px) {
-  .about-photo-large { min-height: 0; aspect-ratio: 4 / 3; }
-  .about-photo-large img { object-position: 50% 76%; transform: scale(1.3); transform-origin: 50% 76%; }
-  .about-photo-large:hover img { transform: scale(1.34); }
+  /* Phones: a ratio taller than the photograph, so the crop runs in from the sides rather than off
+     the top - the signage over the building stays whole, and only empty parking is lost. */
+  .about-photo-large { min-height: 0; aspect-ratio: 5 / 4; }
+  .about-photo-large img { object-position: 50% 50%; transform: none; transform-origin: 50% 50%; }
+  .about-photo-large:hover img { transform: scale(1.03); }
 }
 
 /* Phone: two chapters per row, so the list is about half as tall. */
@@ -2789,7 +2905,7 @@ form .choice-group input { position: absolute; width: 1px; min-height: 0; height
 
 /* Phone: the open guide is its own card, sized to fit one screen. */
 @media (max-width: 560px) {
-  .guide-detail { width: auto; max-width: calc(100vw - 32px); margin-inline: auto; padding: 18px 16px 16px; border: 1px solid rgba(101,139,184,.3); border-radius: 22px; background: rgba(255,255,255,.95); box-shadow: 0 22px 50px rgba(26,62,104,.16); backdrop-filter: blur(6px); }
+  .guide-detail { width: auto; max-width: calc(100vw - 32px); padding: 18px 16px 16px; border-radius: 22px; box-shadow: 0 22px 50px rgba(26,62,104,.16); }
   .guide-detail h2 { font-size: 30px; }
   .guide-detail-kicker { margin-bottom: 8px; font-size: 10.5px; letter-spacing: .16em; }
   .guide-detail-lede { margin-top: 10px; font-size: 14px; line-height: 1.45; }
