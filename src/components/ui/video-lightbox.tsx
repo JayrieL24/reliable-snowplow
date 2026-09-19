@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { Play, X } from "lucide-react";
 
 /* A video thumbnail that opens a YouTube embed in a modal styled like the
@@ -49,7 +50,11 @@ export function VideoLightbox({
         <span className="intro-video-caption"><strong>{caption}</strong><span>{note}</span></span>
       </button>
 
-      {open && (
+      {/* Rendered at the document root. A position:fixed scrim is only fixed to the viewport if no
+          ancestor carries a transform, filter or contain — and this card sits inside sections that
+          motion animates, so left in place the scrim can end up trapped inside the section's box
+          instead of covering the page. */}
+      {open && createPortal(
         <div className="preview-modal" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && setOpen(false)}>
           <section className="video-modal-card" role="dialog" aria-modal="true" aria-label={title}>
             <button ref={closeButton} className="preview-modal-close" type="button" onClick={() => setOpen(false)} aria-label="Close video">
@@ -62,7 +67,8 @@ export function VideoLightbox({
               allowFullScreen
             />
           </section>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
