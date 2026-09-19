@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import { BadgeDollarSign, Clock3, GraduationCap, Timer } from "lucide-react";
+import { Clock3, GraduationCap, Timer } from "lucide-react";
+import { DollarMark } from "@/components/ui/dollar-mark";
 import { POSITIONS } from "@/lib/worker-content";
 
 /* The eleven positions winterworkerswanted.com lists — the client's changelist calls it
@@ -47,5 +48,5 @@ export const SERVICE_NOTES: { icon: LucideIcon; title: string; text: string; acc
   { icon: Clock3, title: "Next day pay", text: "Next day pay on every position." },
   { icon: Timer, title: "15 minutes from home", text: "Work within 15 minutes of where you live." },
   { icon: GraduationCap, title: "No experience needed", text: "Some roles need none at all; others want experience.", accent: true },
-  { icon: BadgeDollarSign, title: "Competitive rates", text: "Paid rates across all winter positions." },
+  { icon: DollarMark, title: "Competitive rates", text: "Paid rates across all winter positions." },
 ];
