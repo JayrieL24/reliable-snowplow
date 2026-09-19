@@ -186,14 +186,25 @@ function buildScene(
     disposables.push(d);
     return d;
   };
-  const texture = (w: number, h: number, draw: Paint) => {
+  type Photo = { src: string; paint: (x: CanvasRenderingContext2D, im: HTMLImageElement, w: number, h: number) => void };
+  const texture = (w: number, h: number, draw: Paint, photo?: Photo) => {
     const c = document.createElement("canvas");
     c.width = w;
     c.height = h;
-    draw(c.getContext("2d")!, w, h);
+    const x = c.getContext("2d")!;
+    draw(x, w, h);
     const t = track(new THREE.CanvasTexture(c));
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    // A photograph on the surface arrives after the rest is painted; the texture just refreshes.
+    if (photo) {
+      const im = new Image();
+      im.onload = () => {
+        photo.paint(x, im, w, h);
+        t.needsUpdate = true;
+      };
+      im.src = photo.src;
+    }
     return t;
   };
   const mat = (params: THREE.MeshStandardMaterialParameters) =>
@@ -203,61 +214,38 @@ function buildScene(
   const setFont = (x: CanvasRenderingContext2D, spec: string) => {
     x.font = `${spec} ${font}`;
   };
+  // Sizes a word to an exact width, so the wordmark keeps its printed proportions in any face.
+  const fitText = (x: CanvasRenderingContext2D, text: string, weight: string, target: number, cx: number, baseline: number) => {
+    setFont(x, `${weight} 200px`);
+    const size = Math.round((200 * target) / x.measureText(text).width);
+    setFont(x, `${weight} ${size}px`);
+    x.fillText(text, cx, baseline);
+  };
   const speckle = (x: CanvasRenderingContext2D, w: number, h: number, alpha: number) => {
     x.fillStyle = `rgba(255,255,255,${alpha})`;
     for (let i = 0; i < 260; i++) x.fillRect(Math.random() * w, Math.random() * h, 2, 2);
   };
 
-  const front = texture(1024, 1456, (x, w, h) => {
-    const g = x.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, NAVY_LIGHT);
-    g.addColorStop(1, NAVY);
-    x.fillStyle = g;
-    x.fillRect(0, 0, w, h);
-    speckle(x, w, h, 0.05);
-    x.textAlign = "center";
-    x.fillStyle = "white";
-    setFont(x, "italic 800 168px");
-    x.fillText("RELIABLE", w / 2, 250);
-    // Slanted white band under the wordmark, as on the company's signage.
-    x.beginPath();
-    x.moveTo(170, 290);
-    x.lineTo(w - 130, 290);
-    x.lineTo(w - 170, 370);
-    x.lineTo(130, 370);
-    x.closePath();
-    x.fill();
-    x.fillStyle = NAVY;
-    setFont(x, "700 54px");
-    x.fillText("Snow Plowing Specialists", w / 2, 350);
-    x.fillStyle = "white";
-    setFont(x, "800 104px");
-    x.fillText("WORKER REFERRAL", w / 2, 600);
-    x.fillText("PROGRAM GUIDE", w / 2, 715);
-    x.fillStyle = "rgba(255,255,255,.55)";
-    x.fillRect(150, 770, w - 300, 3);
-    x.fillRect(150, 870, w - 300, 3);
-    x.fillStyle = "white";
-    setFont(x, "600 46px");
-    x.fillText("OVERVIEW  •  RULES  •  RATES", w / 2, 838);
-    x.fillStyle = ORANGE;
-    x.beginPath();
-    x.moveTo(90, 950);
-    x.lineTo(w - 60, 950);
-    x.lineTo(w - 110, 1060);
-    x.lineTo(90, 1060);
-    x.closePath();
-    x.fill();
-    x.fillStyle = "white";
-    setFont(x, "800 58px");
-    x.fillText("SNOW FIGHTER EDITION", w / 2 - 10, 1026);
-    x.fillStyle = "rgba(255,255,255,.72)";
-    setFont(x, "600 44px");
-    x.fillText("40+ years  ·  since 1986", w / 2, 1330);
-    x.strokeStyle = "rgba(255,255,255,.22)";
-    x.lineWidth = 4;
-    x.strokeRect(46, 46, w - 92, h - 92);
-  });
+  /* Front cover, laid out from the printed edition: the wordmark block over a rule, the title, the
+     strapline between two hairlines, the orange edition band, then a photograph filling the foot.
+     Positions are the printed cover's proportions, so the whole block scales with the texture. */
+  /* Front cover: the printed artwork, un-skewed out of the product photograph. The navy underneath
+     is what shows for the instant before it loads. */
+  const front = texture(
+    1024,
+    1456,
+    (x, w, h) => {
+      const g = x.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#1c528f");
+      g.addColorStop(1, NAVY);
+      x.fillStyle = g;
+      x.fillRect(0, 0, w, h);
+    },
+    {
+      src: "/images/hero/guide-cover-front.webp",
+      paint: (x, im, w, h) => x.drawImage(im, 0, 0, w, h),
+    },
+  );
 
   const back = texture(1024, 1456, (x, w, h) => {
     x.fillStyle = NAVY;
@@ -276,28 +264,21 @@ function buildScene(
     x.fillText("reliablesnowplowing.net", w / 2, 1320);
   });
 
-  const spine = texture(256, 1456, (x, w, h) => {
-    x.fillStyle = NAVY;
-    x.fillRect(0, 0, w, h);
-    x.fillStyle = ORANGE;
-    x.fillRect(0, h - 200, w, 120);
-    x.save();
-    x.translate(w / 2, h / 2);
-    x.rotate(Math.PI / 2);
-    x.textAlign = "center";
-    x.fillStyle = "white";
-    setFont(x, "800 50px");
-    x.fillText("WORKER REFERRAL PROGRAM GUIDE", 30, 18);
-    x.restore();
-    x.fillStyle = "white";
-    x.textAlign = "center";
-    setFont(x, "italic 800 44px");
-    x.save();
-    x.translate(w / 2, 120);
-    x.rotate(Math.PI / 2);
-    x.fillText("RELIABLE", 0, 15);
-    x.restore();
-  });
+  /* Spine: the printed artwork, un-skewed out of the same photograph as the cover. */
+  const spine = texture(
+    256,
+    1456,
+    (x, w, h) => {
+      x.fillStyle = NAVY;
+      x.fillRect(0, 0, w, h);
+      x.fillStyle = ORANGE;
+      x.fillRect(0, h - 200, w, 200);
+    },
+    {
+      src: "/images/hero/guide-cover-spine.webp",
+      paint: (x, im, w, h) => x.drawImage(im, 0, 0, w, h),
+    },
+  );
 
   const endpaper = texture(512, 728, (x, w, h) => {
     x.fillStyle = "#e9f3fb";
@@ -319,8 +300,13 @@ function buildScene(
     x.fillText("Contents", 120, 238);
     x.fillStyle = ORANGE;
     x.fillRect(120, 268, 150, 8);
+    // The rows are spaced to fit between the rule under "Contents" and the footer line, so the last
+    // chapter never runs into it however many chapters the guide gains.
+    const top = 430;
+    const foot = h - 110;
+    const step = Math.min(148, (foot - 89 - top) / Math.max(1, chapters.length - 1));
     chapters.forEach((title, i) => {
-      const y = 430 + i * 148;
+      const y = top + i * step;
       x.fillStyle = ORANGE;
       setFont(x, "800 54px");
       x.fillText(String(i + 1).padStart(2, "0"), 120, y);
@@ -377,7 +363,9 @@ function buildScene(
   book.add(block);
 
   const spineMesh = new THREE.Mesh(track(new THREE.BoxGeometry(0.045, H + OVERHANG * 2, T + CT * 2)), [
-    navyMat, mat({ map: spine, roughness: 0.6 }), navyMat, navyMat, navyMat, navyMat,
+    // The spine faces away from the key light and catches the warm rim, so printed artwork reads
+    // muddy there. A little self-lighting from its own map holds the navy and the orange.
+    navyMat, mat({ map: spine, roughness: 0.6, emissive: 0xffffff, emissiveMap: spine, emissiveIntensity: 0.34 }), navyMat, navyMat, navyMat, navyMat,
   ]);
   spineMesh.position.x = -W / 2 - 0.022;
   book.add(spineMesh);
@@ -385,7 +373,7 @@ function buildScene(
   // The front cover hangs from a hinge on the spine, so it can swing open.
   const hinge = new THREE.Group();
   hinge.position.set(-W / 2 - 0.02, 0, T / 2 + CT / 2);
-  const frontCover = new THREE.Mesh(coverGeo, [navyMat, navyMat, navyMat, navyMat, mat({ map: front, roughness: 0.5 }), mat({ map: endpaper, roughness: 0.85, emissive: 0xffffff, emissiveMap: endpaper, emissiveIntensity: 0.15 })]);
+  const frontCover = new THREE.Mesh(coverGeo, [navyMat, navyMat, navyMat, navyMat, mat({ map: front, roughness: 0.5, emissive: 0xffffff, emissiveMap: front, emissiveIntensity: 0.12 }), mat({ map: endpaper, roughness: 0.85, emissive: 0xffffff, emissiveMap: endpaper, emissiveIntensity: 0.15 })]);
   frontCover.position.x = (W + OVERHANG) / 2 + 0.02;
   hinge.add(frontCover);
   book.add(hinge);
@@ -414,12 +402,9 @@ function buildScene(
 
   /* ---------- sizing ---------- */
   let fit = 1;
-  // A phone-sized stage is too small to read the whole spread, so it frames the contents page.
-  let narrow = false;
   const resize = () => {
     const { width, height } = stage.getBoundingClientRect();
     if (!width || !height) return;
-    narrow = width < 420;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     // Narrow stages pull the camera back so the open spread still fits.
@@ -461,12 +446,14 @@ function buildScene(
     hinge.rotation.y = -swing * OPEN_ANGLE;
     // Closed: turned to show the spine, close to the camera. Open: square on, pulled back so the whole spread fits.
     book.rotation.y = 0.42 * (1 - swing) + 0.06 * swing + state.tiltY;
-    camera.position.z = (5.6 + swing * (narrow ? 0.15 : 1.6)) * fit;
-    // Narrow: pan across to the open page as it settles, rather than pulling back off both.
-    camera.position.x = narrow ? swing * W * 0.46 : 0;
+    camera.position.z = (5.6 + swing * 1.6) * fit;
+    /* The cover is hinged at -W/2 and swings out to the left, so the contents page stays centred on
+       x = 0 however far the book opens. The camera holds there and it is the book that slides right,
+       by half its width, to bring the whole spread into frame once there is room for it. */
+    camera.position.x = 0;
     book.rotation.x = 0.05 + state.tiltX;
     book.rotation.z = reduce ? 0 : Math.sin(t * 0.7) * 0.012 * (1 - swing);
-    book.position.x = narrow ? 0 : swing * (W * 0.5);
+    book.position.x = swing * (W * 0.5);
     book.position.y = reduce ? 0 : Math.sin(t * 0.9) * 0.05;
     shadow.position.x = book.position.x;
     shadow.scale.x = 2.4 + swing * 0.2;
